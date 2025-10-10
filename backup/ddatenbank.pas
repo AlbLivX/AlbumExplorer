@@ -13,9 +13,9 @@ type
 
   TdmMain = class(TDataModule)
     InterBaseUniProvider1: TInterBaseUniProvider;
-    cDatenbank: TUniConnection;
-    sqAdressen: TUniDataSource;
-    qAdressen: TUniQuery;
+    cDatenbank:            TUniConnection;
+    sqAdressen:            TUniDataSource;
+    qAdressen:             TUniQuery;
   private
 
   public

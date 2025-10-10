@@ -11,7 +11,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="56"/>
+        <UsageCount Value="57"/>
       </Unit>
       <Unit>
         <Filename Value="mainform.pas"/>
@@ -21,9 +21,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainForm"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="22"/>
-        <CursorPos X="91" Y="59"/>
-        <UsageCount Value="56"/>
+        <CursorPos X="56" Y="17"/>
+        <UsageCount Value="57"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -36,14 +35,14 @@
         <UnitName Value="dDatenbank"/>
         <EditorIndex Value="2"/>
         <CursorPos X="28" Y="18"/>
-        <UsageCount Value="56"/>
+        <UsageCount Value="57"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="ddatenbank.lfm"/>
         <EditorIndex Value="1"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit>

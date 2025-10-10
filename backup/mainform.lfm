@@ -95,6 +95,7 @@ object Form1: TForm1
     Top = 8
     Width = 232
     HelpType = htKeyword
+    Alignment = taCenter
     BorderStyle = bsNone
     Color = 2293760
     DataField = 'DESCRIPTION'
