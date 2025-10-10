@@ -1,0 +1,214 @@
+object Form1: TForm1
+  Left = 436
+  Height = 670
+  Top = 31
+  Width = 890
+  Caption = 'Form1'
+  ClientHeight = 670
+  ClientWidth = 890
+  Color = 5707543
+  Font.Height = -13
+  Font.Name = 'Sans'
+  Font.Style = [fsBold]
+  object col: TDBGrid
+    Left = 16
+    Height = 344
+    Top = 312
+    Width = 855
+    Align = alCustom
+    AlternateColor = 921102
+    Color = 2293760
+    Columns = <    
+      item
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Sans'
+        Font.Style = [fsBold]
+        Title.Caption = 'ID'
+        Width = 100
+        FieldName = 'ID'
+      end    
+      item
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Sans'
+        Font.Style = [fsBold]
+        Title.Caption = 'ALBUM'
+        Width = 300
+        FieldName = 'ALBUM'
+      end    
+      item
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Sans'
+        Font.Style = [fsBold]
+        Title.Caption = 'ARTIST'
+        Width = 250
+        FieldName = 'ARTIST'
+      end    
+      item
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Sans'
+        Font.Style = [fsBold]
+        Title.Caption = 'Release Year'
+        Width = 171
+        FieldName = 'ReleaseYear'
+      end>
+    DataSource = dmMain.sqAdressen
+    Font.Color = 20480
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    OnCellClick = colCellClick
+  end
+  object Img: TImage
+    Left = 264
+    Height = 285
+    Top = 7
+    Width = 280
+    Stretch = True
+  end
+  object DBNavigator1: TDBNavigator
+    Left = 656
+    Height = 30
+    Top = 263
+    Width = 215
+    BevelOuter = bvNone
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.EnlargeVertical = crsScaleChilds
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 100
+    ClientHeight = 30
+    ClientWidth = 215
+    DataSource = dmMain.sqAdressen
+    Options = []
+    TabOrder = 1
+  end
+  object DBMemo1: TDBMemo
+    Left = 16
+    Height = 285
+    Top = 8
+    Width = 232
+    HelpType = htKeyword
+    Alignment = taCenter
+    BorderStyle = bsNone
+    Color = 2293760
+    DataField = 'DESCRIPTION'
+    DataSource = dmMain.sqAdressen
+    Font.Color = clWhite
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold, fsItalic]
+    ParentFont = False
+    TabOrder = 2
+  end
+  object btnConnect: TButton
+    Left = 752
+    Height = 32
+    Top = 8
+    Width = 120
+    Caption = 'View Albums'
+    Font.Color = 3066159
+    Font.Height = -15
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 3
+    OnClick = btnConnectClick
+  end
+  object btnLoadImage: TButton
+    Left = 560
+    Height = 29
+    Top = 263
+    Width = 88
+    Caption = 'Load Image'
+    TabOrder = 4
+    OnClick = btnLoadImageClick
+  end
+  object dbeID: TDBEdit
+    Left = 560
+    Height = 30
+    Top = 76
+    Width = 80
+    DataField = 'ID'
+    DataSource = dmMain.sqAdressen
+    Color = clWhite
+    MaxLength = 0
+    TabOrder = 5
+    TextHint = 'ID'
+  end
+  object dbeAlbum: TDBEdit
+    Left = 648
+    Height = 30
+    Top = 76
+    Width = 224
+    DataField = 'ALBUM'
+    DataSource = dmMain.sqAdressen
+    Color = clWhite
+    MaxLength = 0
+    TabOrder = 6
+    TextHint = 'Album'
+  end
+  object dbeArtis: TDBEdit
+    Left = 560
+    Height = 30
+    Top = 117
+    Width = 168
+    DataField = 'ARTIST'
+    DataSource = dmMain.sqAdressen
+    Color = clWhite
+    MaxLength = 0
+    TabOrder = 7
+    TextHint = 'Artist/Band..etc'
+  end
+  object dbeReleaseYear: TDBEdit
+    Left = 736
+    Height = 30
+    Top = 118
+    Width = 135
+    DataField = 'RELEASEYEAR'
+    DataSource = dmMain.sqAdressen
+    Color = clWhite
+    MaxLength = 0
+    TabOrder = 8
+    TextHint = 'Release Year'
+  end
+  object Label1: TLabel
+    Left = 560
+    Height = 23
+    Top = 47
+    Width = 118
+    Caption = 'Add an Album:'
+    Font.Color = clWhite
+    Font.Height = -16
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object edMemo: TMemo
+    Left = 560
+    Height = 89
+    Top = 159
+    Width = 311
+    BorderStyle = bsNone
+    Color = clWhite
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
+    Lines.Strings = (
+      'Description:'
+    )
+    ParentFont = False
+    TabOrder = 9
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 719
+    Top = 16
+  end
+end
