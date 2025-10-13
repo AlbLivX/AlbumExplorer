@@ -6,7 +6,7 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 670
   ClientWidth = 890
-  Color = 5707543
+  Color = 2171169
   Font.Height = -13
   Font.Name = 'Sans'
   Font.Style = [fsBold]
@@ -17,10 +17,10 @@ object Form1: TForm1
     Width = 855
     Align = alCustom
     AlternateColor = 921102
-    Color = 2293760
+    Color = clWhite
     Columns = <    
       item
-        Font.Color = clWhite
+        Font.Color = clBlack
         Font.Height = -13
         Font.Name = 'Sans'
         Font.Style = [fsBold]
@@ -56,18 +56,17 @@ object Form1: TForm1
         FieldName = 'ReleaseYear'
       end>
     DataSource = dmMain.sqAdressen
-    Font.Color = 20480
+    Font.Color = clBlack
     Font.Height = -13
     Font.Name = 'Sans'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
-    OnCellClick = colCellClick
   end
   object Img: TImage
-    Left = 264
-    Height = 285
-    Top = 7
+    Left = 136
+    Height = 192
+    Top = 8
     Width = 280
     Stretch = True
   end
@@ -88,19 +87,20 @@ object Form1: TForm1
     DataSource = dmMain.sqAdressen
     Options = []
     TabOrder = 1
+    OnClick = DBNavigator1Click
   end
   object DBMemo1: TDBMemo
-    Left = 16
-    Height = 140
-    Top = 8
-    Width = 232
+    Left = 560
+    Height = 92
+    Top = 159
+    Width = 312
     HelpType = htKeyword
     Alignment = taCenter
     BorderStyle = bsNone
-    Color = 2293760
+    Color = clWhite
     DataField = 'DESCRIPTION'
     DataSource = dmMain.sqAdressen
-    Font.Color = clWhite
+    Font.Color = clBlack
     Font.Height = -13
     Font.Name = 'Sans'
     Font.Style = [fsBold, fsItalic]
@@ -191,13 +191,13 @@ object Form1: TForm1
     ParentFont = False
   end
   object edMemo: TMemo
-    Left = 560
+    Left = 136
     Height = 89
-    Top = 159
-    Width = 311
+    Top = 208
+    Width = 280
     BorderStyle = bsNone
-    Color = clWhite
-    Font.Color = clBlack
+    Color = clBlack
+    Font.Color = clWhite
     Font.Height = -13
     Font.Name = 'Sans'
     Font.Style = [fsBold]

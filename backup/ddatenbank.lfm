@@ -33,4 +33,11 @@ object dmMain: TdmMain
     Left = 480
     Top = 128
   end
+  //object Label1: TLabel
+  //  Left = 8
+  //  Top = 8
+  //  Width = 100
+  //  Height = 21
+  //  Caption = 'Album Explorer'
+  //end
 end
