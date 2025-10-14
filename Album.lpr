@@ -10,7 +10,7 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, MainForm, dDatenbank, unidac10, ibprovider10
+  Forms, MainForm, dDatenbank, unidac10, ibprovider10, SongsFormUnit
   { you can add units after this };
 
 {$R *.res}
@@ -22,8 +22,9 @@ begin
   Application.MainFormOnTaskbar:=True;
   {$POP}
   Application.Initialize;
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TAlbums, Albums);
   Application.CreateForm(TdmMain, dmMain);
+  Application.CreateForm(TTracks, Tracks);
   Application.Run;
 end.
 

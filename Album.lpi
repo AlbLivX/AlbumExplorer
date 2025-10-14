@@ -45,7 +45,7 @@
       <Unit>
         <Filename Value="mainform.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form1"/>
+        <ComponentName Value="Albums"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainForm"/>
@@ -57,6 +57,14 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="dDatenbank"/>
+      </Unit>
+      <Unit>
+        <Filename Value="songsformunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Tracks"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="SongsFormUnit"/>
       </Unit>
     </Units>
   </ProjectOptions>

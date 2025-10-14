@@ -2,10 +2,10 @@ object Tracks: TTracks
   Left = 533
   Height = 680
   Top = 31
-  Width = 738
+  Width = 713
   Caption = 'Tracks'
   ClientHeight = 680
-  ClientWidth = 738
+  ClientWidth = 713
   object DBNavigator1: TDBNavigator
     Left = 240
     Height = 25
@@ -31,7 +31,23 @@ object Tracks: TTracks
     Width = 916
     Align = alCustom
     Color = clWindow
-    Columns = <>
+    Columns = <    
+      item
+        Title.Caption = 'ID'
+        Width = 100
+      end    
+      item
+        Title.Caption = 'AlbumID'
+        Width = 100
+      end    
+      item
+        Title.Caption = 'SongTitle'
+        Width = 400
+      end    
+      item
+        Title.Caption = 'Duration'
+        Width = 100
+      end>
     DataSource = dmMain.sqSongs
     TabOrder = 1
   end
