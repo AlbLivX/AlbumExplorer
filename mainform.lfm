@@ -1,15 +1,16 @@
-object Form1: TForm1
+object Albums: TAlbums
   Left = 436
   Height = 670
   Top = 31
   Width = 890
-  Caption = 'Form1'
+  Caption = 'Albums'
   ClientHeight = 670
   ClientWidth = 890
   Color = 2171169
   Font.Height = -13
   Font.Name = 'Sans'
   Font.Style = [fsBold]
+  LCLVersion = '4.2.0.0'
   object col: TDBGrid
     Left = 16
     Height = 344
@@ -64,17 +65,17 @@ object Form1: TForm1
     TabOrder = 0
   end
   object Img: TImage
-    Left = 136
-    Height = 192
-    Top = 8
+    Left = 96
+    Height = 215
+    Top = 48
     Width = 280
     Stretch = True
   end
   object DBNavigator1: TDBNavigator
-    Left = 656
+    Left = 576
     Height = 30
-    Top = 263
-    Width = 215
+    Top = 209
+    Width = 200
     BevelOuter = bvNone
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.EnlargeVertical = crsScaleChilds
@@ -83,21 +84,24 @@ object Form1: TForm1
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 100
     ClientHeight = 30
-    ClientWidth = 215
+    ClientWidth = 200
     DataSource = dmMain.sqAdressen
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
     Options = []
+    ParentFont = False
     TabOrder = 1
-    OnClick = DBNavigator1Click
   end
   object DBMemo1: TDBMemo
-    Left = 560
-    Height = 92
-    Top = 159
-    Width = 312
+    Left = 496
+    Height = 103
+    Top = 96
+    Width = 280
     HelpType = htKeyword
-    Alignment = taCenter
     BorderStyle = bsNone
-    Color = clWhite
+    Color = 3618615
     DataField = 'DESCRIPTION'
     DataSource = dmMain.sqAdressen
     Font.Color = clBlack
@@ -108,12 +112,12 @@ object Form1: TForm1
     TabOrder = 2
   end
   object btnConnect: TButton
-    Left = 752
-    Height = 32
-    Top = 8
-    Width = 120
-    Caption = 'View Albums'
-    Font.Color = 3066159
+    Left = 496
+    Height = 29
+    Top = 209
+    Width = 72
+    Caption = 'Connect'
+    Font.Color = 34560
     Font.Height = -15
     Font.Name = 'Sans'
     Font.Style = [fsBold]
@@ -122,93 +126,21 @@ object Form1: TForm1
     OnClick = btnConnectClick
   end
   object btnLoadImage: TButton
-    Left = 560
+    Left = 168
     Height = 29
-    Top = 263
+    Top = 272
     Width = 88
     Caption = 'Load Image'
-    TabOrder = 4
-    OnClick = btnLoadImageClick
-  end
-  object dbeID: TDBEdit
-    Left = 560
-    Height = 30
-    Top = 76
-    Width = 80
-    DataField = 'ID'
-    DataSource = dmMain.sqAdressen
-    Color = clWhite
-    MaxLength = 0
-    TabOrder = 5
-    TextHint = 'ID'
-  end
-  object dbeAlbum: TDBEdit
-    Left = 648
-    Height = 30
-    Top = 76
-    Width = 224
-    DataField = 'ALBUM'
-    DataSource = dmMain.sqAdressen
-    Color = clWhite
-    MaxLength = 0
-    TabOrder = 6
-    TextHint = 'Album'
-  end
-  object dbeArtis: TDBEdit
-    Left = 560
-    Height = 30
-    Top = 117
-    Width = 168
-    DataField = 'ARTIST'
-    DataSource = dmMain.sqAdressen
-    Color = clWhite
-    MaxLength = 0
-    TabOrder = 7
-    TextHint = 'Artist/Band..etc'
-  end
-  object dbeReleaseYear: TDBEdit
-    Left = 736
-    Height = 30
-    Top = 118
-    Width = 135
-    DataField = 'RELEASEYEAR'
-    DataSource = dmMain.sqAdressen
-    Color = clWhite
-    MaxLength = 0
-    TabOrder = 8
-    TextHint = 'Release Year'
-  end
-  object Label1: TLabel
-    Left = 560
-    Height = 23
-    Top = 47
-    Width = 118
-    Caption = 'Add an Album:'
-    Font.Color = clWhite
-    Font.Height = -16
-    Font.Name = 'Sans'
-    Font.Style = [fsBold]
-    ParentFont = False
-  end
-  object edMemo: TMemo
-    Left = 136
-    Height = 89
-    Top = 208
-    Width = 280
-    BorderStyle = bsNone
-    Color = clBlack
-    Font.Color = clWhite
+    Font.Color = clBlack
     Font.Height = -13
     Font.Name = 'Sans'
     Font.Style = [fsBold]
-    Lines.Strings = (
-      'Description:'
-    )
     ParentFont = False
-    TabOrder = 9
+    TabOrder = 4
+    OnClick = btnLoadImageClick
   end
   object OpenDialog1: TOpenDialog
-    Left = 719
-    Top = 16
+    Left = 264
+    Top = 272
   end
 end

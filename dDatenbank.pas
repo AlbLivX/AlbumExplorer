@@ -16,6 +16,8 @@ type
     cDatenbank:            TUniConnection;
     sqAdressen:            TUniDataSource;
     qAdressen:             TUniQuery;
+    sqSongs:               TUniDataSource;
+    qSongs:                TUniQuery;
   private
 
   public
@@ -28,6 +30,9 @@ var
 implementation
 
 {$R *.lfm}
+
+{ TdmMain }
+
 
 end.
 

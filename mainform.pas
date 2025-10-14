@@ -6,73 +6,51 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, DBGrids, ExtCtrls,
-  DBCtrls, StdCtrls, dDatenbank, DB;
+  DBCtrls, StdCtrls, DB, dDatenbank, SongsFormUnit;
 
 type
-  { TForm1 }
-  TForm1 = class(TForm)
+  TAlbums = class(TForm)
     btnConnect: TButton;
     btnLoadImage: TButton;
     col: TDBGrid;
-    dbeID: TDBEdit;
-    dbeAlbum: TDBEdit;
-    dbeArtis: TDBEdit;
-    dbeReleaseYear: TDBEdit;
     DBMemo1: TDBMemo;
     DBNavigator1: TDBNavigator;
-    edMemo: TMemo;
     Img: TImage;
-    Label1: TLabel;
     OpenDialog1: TOpenDialog;
 
     procedure btnConnectClick(Sender: TObject);
     procedure btnLoadImageClick(Sender: TObject);
     procedure colCellClick(Column: TColumn);
-    procedure DBNavigator1Click(Sender: TObject; Button: TDBNavButtonType);
-
   private
-    procedure ClearEditFields;
     procedure DisplayCurrentRecord;
-    procedure SaveDescription;
-    procedure LoadAlbumImage;
     function CanEditDataset: Boolean;
-
+    procedure qAdressenAfterScroll(DataSet: TDataSet);
   public
-
   end;
 
 var
-  Form1: TForm1;
+  Albums: TAlbums;
 
 implementation
 
 {$R *.lfm}
 
-{ TForm1 }
+{ TAlbums }
 
-procedure TForm1.ClearEditFields;
-begin
-  dbeID.Text := '';
-  dbeAlbum.Text := '';
-  dbeArtis.Text := '';
-  dbeReleaseYear.Text := '';
-  DBMemo1.Clear;
-  edMemo.Clear;
-  Img.Picture := nil;
-end;
-
-procedure TForm1.DisplayCurrentRecord;
+procedure TAlbums.DisplayCurrentRecord;
 var
   Field: TField;
   BlobStream: TStream;
 begin
   if not CanEditDataset then Exit;
 
+
   Field := dmMain.qAdressen.FieldByName('Description');
   if Assigned(Field) and not Field.IsNull then
-    edMemo.Text := Field.AsString
+    DBMemo1.Text := Field.AsString
   else
-    edMemo.Clear;
+    DBMemo1.Clear;
+
 
   Field := dmMain.qAdressen.FieldByName('AlbumCover');
   Img.Picture := nil;
@@ -87,73 +65,64 @@ begin
   end;
 end;
 
-procedure TForm1.SaveDescription;
+function TAlbums.CanEditDataset: Boolean;
 begin
-  if not CanEditDataset then Exit;
-
-  dmMain.qAdressen.Edit;
-  try
-    dmMain.qAdressen.FieldByName('Description').AsString := DBMemo1.Text;
-    dmMain.qAdressen.Post;
- s
-    ClearEditFields;
-
-    DisplayCurrentRecord;
-
-    ShowMessage('Description saved successfully!');
-  except
-    on E: Exception do
-    begin
-      dmMain.qAdressen.Cancel;
-      ShowMessage('Error saving description: ' + E.Message);
-    end;
-  end;
+  Result := (dmMain.qAdressen.Active) and (not dmMain.qAdressen.IsEmpty);
 end;
 
-procedure TForm1.btnConnectClick(Sender: TObject);
-begin
-  ClearEditFields;
-
-  if not dmMain.cDatenbank.Connected then
-    dmMain.cDatenbank.Connected := True;
-  if not dmMain.qAdressen.Active then
-    dmMain.qAdressen.Open;
-
-  col.OnCellClick := @colCellClick;
-end;
-
-procedure TForm1.colCellClick(Column: TColumn);
+procedure TAlbums.qAdressenAfterScroll(DataSet: TDataSet);
 begin
   DisplayCurrentRecord;
 end;
 
-procedure TForm1.DBNavigator1Click(Sender: TObject; Button: TDBNavButtonType);
+procedure TAlbums.btnConnectClick(Sender: TObject);
 begin
-  if Button = nbPost then
-    SaveDescription;
+  if not dmMain.cDatenbank.Connected then
+    dmMain.cDatenbank.Connected := True;
+
+  if not dmMain.qAdressen.Active then
+    dmMain.qAdressen.Open;
+
+  // Hook grid click handler
+  col.OnCellClick := @colCellClick;
+
+  // Hook dataset scroll handler
+  dmMain.qAdressen.AfterScroll := @qAdressenAfterScroll;
+
+
+
 end;
 
-procedure TForm1.LoadAlbumImage;
+procedure TAlbums.colCellClick(Column: TColumn);
 var
-  BlobStream: TStream;
-  Field: TField;
+  AlbumID: Integer;
+  Choice: Integer;
 begin
-  Img.Picture := nil;
-  if not CanEditDataset then Exit;
-
-  Field := dmMain.qAdressen.FieldByName('AlbumCover');
-  if Assigned(Field) and (Field.DataType = ftBlob) and not Field.IsNull then
+  if Column.FieldName = 'ALBUM' then
   begin
-    BlobStream := dmMain.qAdressen.CreateBlobStream(Field, bmRead);
-    try
-      Img.Picture.LoadFromStream(BlobStream);
-    finally
-      BlobStream.Free;
+    DisplayCurrentRecord;
+
+    Choice :=
+    MessageDlg('For Editting Album click "Yes", for Viewing Tracks Click "No" ', mtConfirmation, [mbYes, mbNo], 0);
+
+    if Choice = mrYes then
+    begin
+      if not (dmMain.qAdressen.State in [dsEdit, dsInsert]) then
+        dmMain.qAdressen.Edit;
+    end
+    else
+    begin
+      AlbumID := dmMain.qAdressen.FieldByName('ID').AsInteger;
+
+      if not Assigned(Tracks) then
+        Application.CreateForm(TTracks, Tracks);
+      Tracks.LoadSongsFromAlbum(AlbumID);
+      Tracks.Show;
     end;
   end;
 end;
 
-procedure TForm1.btnLoadImageClick(Sender: TObject);
+procedure TAlbums.btnLoadImageClick(Sender: TObject);
 var
   FileStream, BlobStream: TStream;
   Field: TField;
@@ -167,7 +136,8 @@ begin
       if not Assigned(Field) or (Field.DataType <> ftBlob) then
         raise Exception.Create('AlbumCover field missing or not a BLOB');
 
-      dmMain.qAdressen.Edit;
+      if not (dmMain.qAdressen.State in [dsEdit, dsInsert]) then
+        dmMain.qAdressen.Edit;
 
       FileStream := TFileStream.Create(OpenDialog1.FileName, fmOpenRead);
       try
@@ -182,18 +152,13 @@ begin
         FileStream.Free;
       end;
 
-      LoadAlbumImage;
+      DisplayCurrentRecord;
       ShowMessage('Image saved successfully!');
     except
       on E: Exception do
         ShowMessage('Error saving image: ' + E.Message);
     end;
   end;
-end;
-
-function TForm1.CanEditDataset: Boolean;
-begin
-  Result := (dmMain.qAdressen.Active) and (not dmMain.qAdressen.IsEmpty);
 end;
 
 end.

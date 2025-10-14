@@ -1,0 +1,53 @@
+object Tracks: TTracks
+  Left = 533
+  Height = 680
+  Top = 31
+  Width = 738
+  Caption = 'Tracks'
+  ClientHeight = 680
+  ClientWidth = 738
+  object DBNavigator1: TDBNavigator
+    Left = 240
+    Height = 25
+    Top = 288
+    Width = 241
+    BevelOuter = bvNone
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.EnlargeVertical = crsScaleChilds
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 100
+    ClientHeight = 25
+    ClientWidth = 241
+    DataSource = dmMain.sqSongs
+    Options = []
+    TabOrder = 0
+  end
+  object DBGrid1: TDBGrid
+    Left = 0
+    Height = 336
+    Top = 344
+    Width = 916
+    Align = alCustom
+    Color = clWindow
+    Columns = <>
+    DataSource = dmMain.sqSongs
+    TabOrder = 1
+  end
+  object DBMemo1: TDBMemo
+    Left = 448
+    Height = 138
+    Top = 72
+    Width = 216
+    DataSource = dmMain.sqAdressen
+    TabOrder = 2
+  end
+  object DBImage1: TDBImage
+    Left = 64
+    Height = 218
+    Top = 32
+    Width = 232
+    DataSource = dmMain.sqAdressen
+  end
+end
