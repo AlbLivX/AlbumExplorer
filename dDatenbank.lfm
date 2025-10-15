@@ -17,7 +17,6 @@ object dmMain: TdmMain
     SQL.Strings = (
       'SELECT ID, Album, Artist, ReleaseYear, Description, AlbumCover FROM Album'
     )
-    DetailFields = 'SELECT * FROM Album'
     FilterOptions = []
     Left = 246
     Top = 129
@@ -33,7 +32,6 @@ object dmMain: TdmMain
   end
   object qSongs: TUniQuery
     Connection = cDatenbank
-    FilterOptions = []
     Left = 246
     Top = 216
   end

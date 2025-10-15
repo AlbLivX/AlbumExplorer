@@ -1,11 +1,11 @@
 unit dDatenbank;
 
-{$mode ObjFPC}{$H+}
+{$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, Uni, InterBaseUniProvider;
+  Classes, SysUtils, Uni, InterBaseUniProvider, DB;
 
 type
   { TdmMain }
@@ -24,9 +24,9 @@ type
 var
   dmMain: TdmMain;
 
-
 implementation
 
 {$R *.lfm}
 
 end.
+

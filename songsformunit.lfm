@@ -35,18 +35,22 @@ object Tracks: TTracks
       item
         Title.Caption = 'ID'
         Width = 100
+        FieldName = 'ID'
       end    
       item
         Title.Caption = 'AlbumID'
         Width = 100
+        FieldName = 'ALBUMID'
       end    
       item
         Title.Caption = 'SongTitle'
         Width = 400
+        FieldName = 'SONGTITLE'
       end    
       item
         Title.Caption = 'Duration'
         Width = 100
+        FieldName = 'DURATION'
       end>
     DataSource = dmMain.sqSongs
     TabOrder = 1
@@ -56,7 +60,7 @@ object Tracks: TTracks
     Height = 138
     Top = 72
     Width = 216
-    DataSource = dmMain.sqAdressen
+    DataSource = dmMain.sqSongs
     TabOrder = 2
   end
   object DBImage1: TDBImage
@@ -64,6 +68,6 @@ object Tracks: TTracks
     Height = 218
     Top = 32
     Width = 232
-    DataSource = dmMain.sqAdressen
+    DataSource = dmMain.sqSongs
   end
 end
