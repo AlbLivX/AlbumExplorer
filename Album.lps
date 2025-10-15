@@ -9,7 +9,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="16" Y="14"/>
-        <UsageCount Value="102"/>
+        <UsageCount Value="104"/>
       </Unit>
       <Unit>
         <Filename Value="mainform.pas"/>
@@ -18,8 +18,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainForm"/>
-        <CursorPos X="40" Y="9"/>
-        <UsageCount Value="102"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="25"/>
+        <CursorPos X="73" Y="38"/>
+        <FoldState Value=" T3i00M7 Piej00."/>
+        <UsageCount Value="104"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -32,7 +35,7 @@
         <UnitName Value="dDatenbank"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="54" Y="25"/>
-        <UsageCount Value="102"/>
+        <UsageCount Value="104"/>
       </Unit>
       <Unit>
         <Filename Value="songsformunit.pas"/>
@@ -41,10 +44,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SongsFormUnit"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="5" Y="22"/>
-        <UsageCount Value="52"/>
+        <CursorPos Y="11"/>
+        <FoldState Value=" T7ACA T3V0A2 PTI0j"/>
+        <UsageCount Value="54"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -55,7 +58,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UIStyle"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="29"/>
+        <UsageCount Value="31"/>
       </Unit>
       <Unit>
         <Filename Value="ddatenbank.lfm"/>
@@ -93,7 +96,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <EditorIndex Value="2"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="12"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
