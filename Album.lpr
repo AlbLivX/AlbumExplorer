@@ -10,7 +10,8 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, MainForm, dDatenbank, unidac10, ibprovider10, SongsFormUnit
+  Forms, runtimetypeinfocontrols, MainForm, dDatenbank, unidac10, ibprovider10,
+  SongsFormUnit
   { you can add units after this };
 
 {$R *.res}

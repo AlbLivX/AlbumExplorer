@@ -25,6 +25,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="RunTimeTypeInfoControls"/>
+      </Item>
+      <Item>
         <PackageName Value="ibprovider10"/>
       </Item>
       <Item>
@@ -65,6 +68,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SongsFormUnit"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uistyle.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="UIStyle"/>
       </Unit>
     </Units>
   </ProjectOptions>

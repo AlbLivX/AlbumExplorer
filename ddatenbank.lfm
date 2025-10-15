@@ -1,11 +1,9 @@
 object dmMain: TdmMain
   OldCreateOrder = False
   Height = 746
-  HorizontalOffset = 1690
-  VerticalOffset = 31
   Width = 817
   object cDatenbank: TUniConnection
-    Connected = True
+    Connected = False
     ProviderName = 'InterBase'
     Database = '/database/livia.fdb'
     Username = 'sysdba'
@@ -19,7 +17,6 @@ object dmMain: TdmMain
     SQL.Strings = (
       'SELECT ID, Album, Artist, ReleaseYear, Description, AlbumCover FROM Album'
     )
-    DetailFields = 'SELECT * FROM Album'
     FilterOptions = []
     Left = 246
     Top = 129
@@ -38,13 +35,12 @@ object dmMain: TdmMain
     SQL.Strings = (
       'SELECT ID, AlbumID, SongTitle, Duration FROM Songs WHERE AlbumID = :AlbumID'
     )
-    DetailFields = 'SELECT  * FROM SONGS'
     FilterOptions = []
     Left = 246
     Top = 216
-    ParamData = <    
+    ParamData = <
       item
-        DataType = ftUnknown
+        DataType = ftInteger
         Name = 'AlbumID'
       end>
   end
@@ -54,3 +50,4 @@ object dmMain: TdmMain
     Top = 216
   end
 end
+

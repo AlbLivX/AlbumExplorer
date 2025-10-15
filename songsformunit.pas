@@ -31,12 +31,11 @@ implementation
 
 procedure TTracks.FormCreate(Sender: TObject);
 begin
-  // Bind DB controls to song dataset
+
   if Assigned(dmMain) then
   begin
     DBGrid1.DataSource := dmMain.sqSongs;
     DBNavigator1.DataSource := dmMain.sqSongs;
-    // Only bind these if qSongs has matching fields
     DBMemo1.DataSource := dmMain.sqSongs;
     DBImage1.DataSource := dmMain.sqSongs;
   end;
@@ -57,10 +56,24 @@ begin
 
   dmMain.qSongs.Close;
   dmMain.qSongs.SQL.Text :=
-    'SELECT ID, AlbumID, SongTitle, Duration FROM Songs WHERE AlbumID = :AlbumID';
+    'SELECT ' +
+    '  s.ID, ' +
+    '  s.SongTitle, ' +
+    '  s.Duration, ' +
+    '  s.AlbumID, ' +
+    '  a.Album, ' +
+    '  a.Artist, ' +
+    '  a.ReleaseYear, ' +
+    '  a.Description, ' +
+    '  a.AlbumCover ' +
+    'FROM Songs s ' +
+    'JOIN Album a ON s.AlbumID = a.ID ' +
+    'WHERE s.AlbumID = :AlbumID';
+
   dmMain.qSongs.ParamByName('AlbumID').AsInteger := AlbumID;
   dmMain.qSongs.Open;
 end;
+
 
 end.
 

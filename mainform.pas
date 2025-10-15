@@ -6,9 +6,12 @@ interface
 
 uses
 Classes, SysUtils, Forms, Controls, Graphics, Dialogs, DBGrids, ExtCtrls,
-DBCtrls, StdCtrls, DB, dDatenbank, SongsFormUnit;
+DBCtrls, StdCtrls, Buttons, RTTICtrls, dDatenbank, SongsFormUnit, DB;
 
 type
+
+{ TAlbums }
+
 TAlbums = class(TForm)
 btnConnect: TButton;
 btnLoadImage: TButton;
@@ -18,6 +21,7 @@ DBNavigator1: TDBNavigator;
 Img: TImage;
 OpenDialog1: TOpenDialog;
 procedure btnConnectClick(Sender: TObject);
+procedure btnConnectTestClick(Sender: TObject);
 procedure btnLoadImageClick(Sender: TObject);
 procedure colCellClick(Column: TColumn);
 private
@@ -34,6 +38,8 @@ Albums: TAlbums;
 implementation
 
 {$R *.lfm}
+
+
 
 procedure TAlbums.DisplayCurrentRecord;
 var
@@ -88,6 +94,11 @@ ShowMessage('Failed to open albums dataset: ' + E.Message);
 end;
 col.OnCellClick := @colCellClick;
 dmMain.qAdressen.AfterScroll := @qAdressenAfterScroll;
+end;
+
+procedure TAlbums.btnConnectTestClick(Sender: TObject);
+begin
+  ShowMessage('Clicked');
 end;
 
 procedure TAlbums.colCellClick(Column: TColumn);

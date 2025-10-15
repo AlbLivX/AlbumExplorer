@@ -60,7 +60,8 @@ object Tracks: TTracks
     Height = 138
     Top = 72
     Width = 216
-    DataSource = dmMain.sqSongs
+    DataField = 'DESCRIPTION'
+    DataSource = dmMain.sqAdressen
     TabOrder = 2
   end
   object DBImage1: TDBImage
@@ -68,6 +69,7 @@ object Tracks: TTracks
     Height = 218
     Top = 32
     Width = 232
-    DataSource = dmMain.sqSongs
+    DataField = 'ALBUMCOVER'
+    DataSource = dmMain.sqAdressen
   end
 end
