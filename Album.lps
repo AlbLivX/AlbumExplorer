@@ -9,7 +9,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="16" Y="14"/>
-        <UsageCount Value="119"/>
+        <UsageCount Value="121"/>
       </Unit>
       <Unit>
         <Filename Value="mainform.pas"/>
@@ -20,7 +20,7 @@
         <UnitName Value="MainForm"/>
         <TopLine Value="44"/>
         <CursorPos Y="44"/>
-        <UsageCount Value="119"/>
+        <UsageCount Value="121"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -33,7 +33,7 @@
         <UnitName Value="dDatenbank"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="54" Y="25"/>
-        <UsageCount Value="119"/>
+        <UsageCount Value="121"/>
       </Unit>
       <Unit>
         <Filename Value="songsformunit.pas"/>
@@ -44,9 +44,9 @@
         <UnitName Value="SongsFormUnit"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="25"/>
-        <CursorPos X="71" Y="44"/>
-        <UsageCount Value="69"/>
+        <TopLine Value="77"/>
+        <CursorPos Y="98"/>
+        <UsageCount Value="71"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -57,7 +57,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UIStyle"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="46"/>
+        <UsageCount Value="48"/>
       </Unit>
       <Unit>
         <Filename Value="ddatenbank.lfm"/>
@@ -96,7 +96,7 @@
         <ResourceBaseClass Value="DataModule"/>
         <EditorIndex Value="2"/>
         <CursorPos X="49" Y="8"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="19"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -110,54 +110,6 @@
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="75" Column="3" TopLine="57"/>
-      </Position>
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="82" Column="2" TopLine="60"/>
-      </Position>
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="96" Column="5" TopLine="60"/>
-      </Position>
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="100" Column="79" TopLine="75"/>
-      </Position>
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="98" TopLine="32"/>
-      </Position>
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="89" Column="12" TopLine="43"/>
-      </Position>
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="103" TopLine="38"/>
-      </Position>
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="28" Column="15" TopLine="17"/>
-      </Position>
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="141" TopLine="105"/>
-      </Position>
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="39" Column="21"/>
-      </Position>
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="193" Column="55" TopLine="185"/>
-      </Position>
-      <Position>
-        <Filename Value="songsformunit.pas"/>
-        <Caret Line="184" Column="16" TopLine="157"/>
-      </Position>
       <Position>
         <Filename Value="songsformunit.pas"/>
         <Caret Line="168" Column="81" TopLine="155"/>
@@ -228,6 +180,54 @@
       <Position>
         <Filename Value="songsformunit.pas"/>
         <Caret Line="131" TopLine="107"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="78" Column="5" TopLine="23"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="43" Column="11" TopLine="25"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="49" Column="79" TopLine="31"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="88" Column="5" TopLine="53"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="23" Column="73" TopLine="9"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="119" Column="5" TopLine="84"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="88" Column="18" TopLine="82"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="23" Column="73" TopLine="15"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="182" Column="5" TopLine="146"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="42" Column="3" TopLine="24"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="80" Column="38" TopLine="64"/>
+      </Position>
+      <Position>
+        <Filename Value="songsformunit.pas"/>
+        <Caret Line="180" TopLine="16"/>
       </Position>
     </JumpHistory>
     <RunParams>
