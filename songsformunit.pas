@@ -5,19 +5,28 @@ unit SongsFormUnit;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, DBCtrls, DBGrids, dDatenbank, DB;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, DBCtrls, DBGrids,
+  StdCtrls, ExtCtrls, dDatenbank, DB;
 
 type
+
+  { TTracks }
+
   TTracks = class(TForm)
     DBGrid1: TDBGrid;
     DBImage1: TDBImage;
     DBMemo1: TDBMemo;
+    DBMemo2: TDBMemo;
     DBNavigator1: TDBNavigator;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
   public
     procedure LoadSongsFromAlbum(AlbumID: Integer);
+    procedure colClick(Column: TColumn);
+    function CanEditDataset: Boolean;
+    procedure HandleSongClick;
+    procedure DisplayCurrentSong;
   end;
 
 var
@@ -29,15 +38,79 @@ implementation
 
 { TTracks }
 
+function TTracks.CanEditDataset: Boolean;
+begin
+  Result := Assigned(dmMain) and dmMain.qSongs.Active and not dmMain.qSongs.IsEmpty;
+end;
+
+procedure TTracks.DisplayCurrentSong;
+var
+  Field: TField;
+  BlobStream: TStream;
+begin
+  if not CanEditDataset then Exit;
+
+  // --- Display lyrics from database ---
+  Field := dmMain.qSongs.FieldByName('Lyrics');
+  if Assigned(Field) and not Field.IsNull then
+    DBMemo2.Text := Field.AsString
+  else
+    DBMemo2.Clear;
+
+  // --- Display song artwork if available ---
+  Field := dmMain.qSongs.FieldByName('SongCover');
+  DBImage1.Picture := nil;
+  if Assigned(Field) and (Field.DataType = ftBlob) and not Field.IsNull then
+  begin
+    BlobStream := dmMain.qSongs.CreateBlobStream(Field, bmRead);
+    try
+      DBImage1.Picture.LoadFromStream(BlobStream);
+    finally
+      BlobStream.Free;
+    end;
+  end;
+end;
+
+procedure TTracks.HandleSongClick;
+var
+  Choice: Integer;
+begin
+  DisplayCurrentSong;
+
+  Choice := MessageDlg(
+    'For editing the song click "Yes", for viewing lyrics click "No".',
+    mtConfirmation, [mbYes, mbNo], 0
+  );
+
+  if Choice = mrYes then
+  begin
+    if not (dmMain.qSongs.State in [dsEdit, dsInsert]) then
+      dmMain.qSongs.Edit;
+
+    DBMemo2.ReadOnly := False;
+  end
+  else
+  begin
+    DisplayCurrentSong;
+    DBMemo2.ReadOnly := True;
+  end;
+end;
+
+procedure TTracks.colClick(Column: TColumn);
+begin
+  if (Column.FieldName = 'SONGS') and CanEditDataset then
+    HandleSongClick;
+end;
+
 procedure TTracks.FormCreate(Sender: TObject);
 begin
-
   if Assigned(dmMain) then
   begin
     DBGrid1.DataSource := dmMain.sqSongs;
     DBNavigator1.DataSource := dmMain.sqSongs;
     DBMemo1.DataSource := dmMain.sqSongs;
     DBImage1.DataSource := dmMain.sqSongs;
+    DBMemo2.ReadOnly := True;
   end;
 end;
 
@@ -53,27 +126,10 @@ begin
 
   if not dmMain.cDatenbank.Connected then
     dmMain.cDatenbank.Connected := True;
-
-  dmMain.qSongs.Close;
-  dmMain.qSongs.SQL.Text :=
-    'SELECT ' +
-    '  s.ID, ' +
-    '  s.SongTitle, ' +
-    '  s.Duration, ' +
-    '  s.AlbumID, ' +
-    '  a.Album, ' +
-    '  a.Artist, ' +
-    '  a.ReleaseYear, ' +
-    '  a.Description, ' +
-    '  a.AlbumCover ' +
-    'FROM Songs s ' +
-    'JOIN Album a ON s.AlbumID = a.ID ' +
-    'WHERE s.AlbumID = :AlbumID';
-
-  dmMain.qSongs.ParamByName('AlbumID').AsInteger := AlbumID;
-  dmMain.qSongs.Open;
+    dmMain.qSongs.Close;
+    dmMain.qSongs.ParamByName('AlbumID').AsInteger := AlbumID;
+    dmMain.qSongs.Open;
 end;
-
 
 end.
 

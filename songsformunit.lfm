@@ -9,7 +9,7 @@ object Tracks: TTracks
   object DBNavigator1: TDBNavigator
     Left = 240
     Height = 25
-    Top = 288
+    Top = 320
     Width = 241
     BevelOuter = bvNone
     ChildSizing.EnlargeHorizontal = crsScaleChilds
@@ -55,21 +55,34 @@ object Tracks: TTracks
     DataSource = dmMain.sqSongs
     TabOrder = 1
   end
-  object DBMemo1: TDBMemo
-    Left = 448
-    Height = 138
-    Top = 72
-    Width = 216
-    DataField = 'DESCRIPTION'
-    DataSource = dmMain.sqAdressen
-    TabOrder = 2
-  end
   object DBImage1: TDBImage
-    Left = 64
-    Height = 218
-    Top = 32
-    Width = 232
+    Left = 32
+    Height = 200
+    Top = 16
+    Width = 280
     DataField = 'ALBUMCOVER'
     DataSource = dmMain.sqAdressen
+    Stretch = True
+    Transparent = True
+  end
+  object DBMemo1: TDBMemo
+    Left = 32
+    Height = 96
+    Top = 216
+    Width = 280
+    DataField = 'DESCRIPTION'
+    DataSource = dmMain.sqAdressen
+    ScrollBars = ssVertical
+    TabOrder = 2
+  end
+  object DBMemo2: TDBMemo
+    Left = 408
+    Height = 296
+    Top = 16
+    Width = 280
+    DataField = 'LYRICS'
+    DataSource = dmMain.sqSongs
+    ScrollBars = ssVertical
+    TabOrder = 3
   end
 end
