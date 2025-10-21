@@ -6,6 +6,7 @@ object Tracks: TTracks
   Caption = 'Tracks'
   ClientHeight = 680
   ClientWidth = 713
+  LCLVersion = '4.2.0.0'
   object DBNavigator1: TDBNavigator
     Left = 240
     Height = 25
