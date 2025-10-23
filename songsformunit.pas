@@ -6,9 +6,22 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, DBCtrls, DBGrids,
-  StdCtrls, ExtCtrls, dDatenbank, DB;
+  StdCtrls, ExtCtrls, dDatenbank, DB, fphttpclient, fpjson, jsonparser;
 
 type
+
+  { TLyricsThread }
+
+  TLyricsThread = class(TThread)
+  private
+    FSongID: Integer;
+    FLyrics: string;
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(SongID: Integer);
+    property Lyrics: string read FLyrics;
+  end;
 
   { TTracks }
 
@@ -23,6 +36,8 @@ type
   private
     function CanEditDataset: Boolean;
     procedure DisplayCurrentSong;
+    procedure FetchLyricsAsync(SongID: Integer);
+    procedure LyricsThreadDone(Sender: TObject);
   public
     procedure LoadSongsFromAlbum(AlbumID: Integer);
     procedure colClick(Column: TColumn);
@@ -36,9 +51,40 @@ implementation
 
 {$R *.lfm}
 
+{ TLyricsThread }
+
+constructor TLyricsThread.Create(SongID: Integer);
+begin
+  inherited Create(False); // Start immediately
+  FreeOnTerminate := True;
+  FSongID := SongID;
+end;
+
+procedure TLyricsThread.Execute;
+var
+  URL, Response: string;
+  JSONObject: TJSONObject;
+begin
+  // Fetch lyrics from API
+  URL := Format('http://localhost:30000/lyrics/%d', [FSongID]);
+  try
+    Response := TFPHTTPClient.SimpleGet(URL);
+    JSONObject := GetJSON(Response) as TJSONObject;
+    try
+      FLyrics := JSONObject.Get('lyrics', '');
+    finally
+      JSONObject.Free;
+    end;
+  except
+    on E: Exception do
+      FLyrics := 'Error fetching lyrics: ' + E.Message;
+  end;
+end;
+
+{ TTracks }
+
 function TTracks.CanEditDataset: Boolean;
 begin
-  //ShowMessage('Checking if dataset can be edited');
   Result := Assigned(dmMain) and dmMain.qSongs.Active and not dmMain.qSongs.IsEmpty;
 end;
 
@@ -47,15 +93,16 @@ var
   Field: TField;
   BlobStream: TStream;
 begin
-  //ShowMessage('Displaying current song');
   if not CanEditDataset then Exit;
 
+  // Display lyrics from dataset if available
   Field := dmMain.qSongs.FieldByName('Lyrics');
   if Assigned(Field) and not Field.IsNull then
     DBMemo2.Text := Field.AsString
   else
     DBMemo2.Clear;
 
+  // Display song cover
   Field := dmMain.qSongs.FieldByName('SongCover');
   DBImage1.Picture := nil;
   if Assigned(Field) and (Field.DataType = ftBlob) and not Field.IsNull then
@@ -69,43 +116,58 @@ begin
   end;
 end;
 
+procedure TTracks.FetchLyricsAsync(SongID: Integer);
+var
+  LyricsThread: TLyricsThread;
+begin
+  // Create thread
+  LyricsThread := TLyricsThread.Create(SongID);
+  // Assign OnTerminate event to update GUI safely in main thread
+  LyricsThread.OnTerminate := @LyricsThreadDone;
+end;
+
+procedure TTracks.LyricsThreadDone(Sender: TObject);
+begin
+  if (Sender is TLyricsThread) and CanEditDataset then
+    DBMemo2.Text := TLyricsThread(Sender).Lyrics;
+end;
+
 procedure TTracks.HandleSongClick;
 var
-  Choice: Integer;
+  SongID: Integer;
 begin
-  //ShowMessage('Handling song click');
   if not CanEditDataset then Exit;
 
-  Choice := MessageDlg(
-    'For editing the song click "Yes", for viewing lyrics click "No".',
-    mtConfirmation, [mbYes, mbNo], 0
-  );
+  SongID := dmMain.qSongs.FieldByName('ID').AsInteger;
 
-  if Choice = mrYes then
-  begin
-    //ShowMessage('Editing song');
-    if not (dmMain.qSongs.State in [dsEdit, dsInsert]) then
-      dmMain.qSongs.Edit;
-    DBMemo2.ReadOnly := False;
-  end
-  else
-  begin
-    //ShowMessage('Viewing lyrics');
-    DBMemo2.Text := dmMain.qSongs.FieldByName('Lyrics').AsString;
-    DBMemo2.ReadOnly := True;
+  case MessageDlg('Edit the song (Yes) or view lyrics (No)?',
+                  mtConfirmation, [mbYes, mbNo], 0) of
+    mrYes:
+      begin
+        if not (dmMain.qSongs.State in [dsEdit, dsInsert]) then
+          dmMain.qSongs.Edit;
+        DBMemo2.ReadOnly := False;
+      end;
+    mrNo:
+      begin
+        // Display existing lyrics if any
+        DisplayCurrentSong;
+        DBMemo2.ReadOnly := True;
+
+        // Fetch lyrics asynchronously
+        FetchLyricsAsync(SongID);
+      end;
   end;
 end;
 
 procedure TTracks.colClick(Column: TColumn);
 begin
-  //ShowMessage('Column clicked: ' + Column.FieldName);
   if (Column.FieldName = 'SongTitle') and CanEditDataset then
     HandleSongClick;
 end;
 
 procedure TTracks.FormCreate(Sender: TObject);
 begin
-  //ShowMessage('FormCreate called');
   if Assigned(dmMain) then
   begin
     DBGrid1.DataSource := dmMain.sqSongs;
@@ -118,26 +180,21 @@ end;
 
 procedure TTracks.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  //ShowMessage('FormClose called');
   CloseAction := caFree;
   Tracks := nil;
 end;
 
 procedure TTracks.LoadSongsFromAlbum(AlbumID: Integer);
 begin
-  //ShowMessage('Loading songs for album ID: ' + IntToStr(AlbumID));
   if not Assigned(dmMain) then Exit;
 
   if not dmMain.cDatenbank.Connected then
-  begin
     dmMain.cDatenbank.Connected := True;
-    //ShowMessage('Database connected');
-  end;
 
   dmMain.qSongs.Close;
   dmMain.qSongs.ParamByName('AlbumID').AsInteger := AlbumID;
   dmMain.qSongs.Open;
-  //ShowMessage('Songs dataset opened');
 end;
+
 end.
 

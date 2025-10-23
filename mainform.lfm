@@ -10,7 +10,6 @@ object Albums: TAlbums
   Font.Height = -13
   Font.Name = 'Sans'
   Font.Style = [fsBold]
-  LCLVersion = '4.2.0.0'
   object col: TDBGrid
     Left = 16
     Height = 344
@@ -85,7 +84,6 @@ object Albums: TAlbums
     ChildSizing.ControlsPerLine = 100
     ClientHeight = 30
     ClientWidth = 200
-    DataSource = dmMain.sqAdressen
     Font.Color = clBlack
     Font.Height = -13
     Font.Name = 'Sans'
@@ -100,6 +98,7 @@ object Albums: TAlbums
     Top = 96
     Width = 280
     HelpType = htKeyword
+    Align = alCustom
     BorderStyle = bsNone
     Color = 3618615
     DataField = 'DESCRIPTION'

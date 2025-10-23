@@ -35,23 +35,10 @@ object dmMain: TdmMain
   object qSongs: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT '
-      '  s.ID,'
-      '  s.SongTitle,'
-      '  s.Duration,'
-      '  s.AlbumID,'
-      '  a.Album,'
-      '  a.Artist,'
-      '  a.ReleaseYear,'
-      '  a.Description,'
-      '  a.AlbumCover,'
-      '  s.Lyrics'
-      'FROM Songs s'
-      'JOIN Album a ON s.AlbumID = a.ID'
-      'WHERE s.AlbumID = :AlbumID'
+      'SELECT s.ID, s.SongTitle, s.Duration, s.AlbumID, a.Album, a.Artist, a.ReleaseYear, a.Description, a.AlbumCover, s.Lyrics FROM Songs s JOIN Album a ON s.AlbumID = a.ID WHERE s.AlbumID = :AlbumID'
     )
     FilterOptions = []
-    Left = 246
+    Left = 248
     Top = 216
     ParamData = <    
       item

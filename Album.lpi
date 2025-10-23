@@ -54,12 +54,11 @@
         <UnitName Value="MainForm"/>
       </Unit>
       <Unit>
-        <Filename Value="ddatenbank.pas"/>
+        <Filename Value="dDatenbank.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="dmMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
-        <UnitName Value="dDatenbank"/>
       </Unit>
       <Unit>
         <Filename Value="songsformunit.pas"/>
@@ -93,6 +92,11 @@
         <Filename Value="uapi.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uAPI"/>
+      </Unit>
+      <Unit>
+        <Filename Value="reastapi.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="REASTAPI"/>
       </Unit>
     </Units>
   </ProjectOptions>

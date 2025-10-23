@@ -6,8 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, DBGrids, ExtCtrls,
-  DBCtrls, StdCtrls, Buttons, RTTICtrls, dDatenbank, SongsFormUnit, DB,
-  Uni;
+  DBCtrls, StdCtrls, Buttons, RTTICtrls, dDatenbank, SongsFormUnit, DB, Uni;
 
 type
   { TAlbums }
@@ -21,15 +20,12 @@ type
     Img: TImage;
     OpenDialog1: TOpenDialog;
     procedure btnConnectClick(Sender: TObject);
-    procedure btnConnectTestClick(Sender: TObject);
     procedure btnLoadImageClick(Sender: TObject);
     procedure colCellClick(Column: TColumn);
   private
-    procedure DisplayCurrentRecord;
-    function CanEditDataset: Boolean;
-    procedure qAdressenAfterScroll(DataSet: TDataSet);
+    procedure DisplayCurrentRecord(DataSet: TDataSet = nil);
     procedure HandleAlbumClick(AlbumID: Integer);
-    procedure Log(const Msg: string);
+    function CanEditDataset: Boolean;
   public
   end;
 
@@ -49,48 +45,27 @@ implementation
 uses
   Variants;
 
-procedure TAlbums.Log(const Msg: string);
-var
-  LogFile: TextFile;
-  LogPath: string;
+{ Simple check for dataset availability }
+function TAlbums.CanEditDataset: Boolean;
 begin
-  try
-    LogPath := ExtractFilePath(ParamStr(0)) + 'logs.txt';
-    AssignFile(LogFile, LogPath);
-    if FileExists(LogPath) then
-      Append(LogFile)
-    else
-      Rewrite(LogFile);
-    WriteLn(LogFile, FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) + ' - ' + Msg);
-    CloseFile(LogFile);
-  except
-    // Logging should never raise errors
-  end;
+  Result := Assigned(dmMain)
+         and dmMain.qAdressen.Active
+         and not dmMain.qAdressen.IsEmpty;
 end;
 
-procedure TAlbums.DisplayCurrentRecord;
+{ Displays current album record’s text and image }
+procedure TAlbums.DisplayCurrentRecord(DataSet: TDataSet);
 var
   Field: TField;
   BlobStream: TStream;
 begin
-  //ShowMessage('Displaying current album record...');
+  if not CanEditDataset then Exit;
 
-  if not CanEditDataset then
-  begin
-    //ShowMessage('Cannot display record: Dataset not editable or empty.');
-    Exit;
-  end;
-
-  Field := dmMain.qAdressen.FieldByName(FIELD_DESCRIPTION);
-  if Assigned(Field) and not Field.IsNull then
-    DBMemo1.Text := Field.AsString
-  else
-    DBMemo1.Clear;
-
-  Field := dmMain.qAdressen.FieldByName(FIELD_ALBUM_COVER);
+  DBMemo1.Text := dmMain.qAdressen.FieldByName(FIELD_DESCRIPTION).AsString;
   Img.Picture := nil;
 
-  if Assigned(Field) and (Field.DataType = ftBlob) and not Field.IsNull then
+  Field := dmMain.qAdressen.FieldByName(FIELD_ALBUM_COVER);
+  if not Field.IsNull then
   begin
     BlobStream := dmMain.qAdressen.CreateBlobStream(Field, bmRead);
     try
@@ -99,179 +74,104 @@ begin
       BlobStream.Free;
     end;
   end;
-
-  //ShowMessage('Album description and image displayed.');
 end;
 
-function TAlbums.CanEditDataset: Boolean;
-begin
-  Result := (Assigned(dmMain)) and (dmMain.qAdressen.Active) and (not dmMain.qAdressen.IsEmpty);
-  if Result then
-    //ShowMessage('Dataset is ready for editing.')
-  else
-    //ShowMessage('Dataset is not ready (inactive or empty).');
-end;
-
-procedure TAlbums.qAdressenAfterScroll(DataSet: TDataSet);
-begin
-  //ShowMessage('Scrolled to a new album record.');
-  DisplayCurrentRecord;
-end;
-
+{ Connects to database and loads albums dataset }
 procedure TAlbums.btnConnectClick(Sender: TObject);
 begin
-  //ShowMessage('Connect button clicked.');
-
+  ShowMessage('Connect button clicked!');
   if not Assigned(dmMain) then
   begin
-    //ShowMessage('Data module not assigned.');
+    ShowMessage('dmMain is not assigned!');
     Exit;
   end;
 
   try
     if not dmMain.cDatenbank.Connected then
-    begin
       dmMain.cDatenbank.Connected := True;
-      Log('Database connected.');
-      //ShowMessage('Connected to database.');
-    end;
-  except
-    on E: EDatabaseError do
-    begin
-      Log('Database connection failed: ' + E.Message);
-      //ShowMessage('Database connection failed: ' + E.Message);
-      Exit;
-    end;
-  end;
 
-  try
     if not dmMain.qAdressen.Active then
-    begin
       dmMain.qAdressen.Open;
-      Log('Albums dataset opened.');
-      //ShowMessage('Albums dataset opened.');
-    end;
+
+    DisplayCurrentRecord;
+
+    dmMain.qAdressen.AfterScroll := @DisplayCurrentRecord;
+    col.OnCellClick := @colCellClick;
+
+     ShowMessage('Database and dataset connected!');
+
   except
-    on E: EDatabaseError do
-    begin
-      Log('Failed to open albums dataset: ' + E.Message);
-      //ShowMessage('Failed to open albums dataset: ' + E.Message);
-      Exit;
-    end;
+    on E: Exception do
+      ShowMessage('Database error: ' + E.Message);
   end;
-
-  col.OnCellClick := @colCellClick;
-  dmMain.qAdressen.AfterScroll := @qAdressenAfterScroll;
-  //ShowMessage('Events wired: Cell click and AfterScroll.');
 end;
 
-procedure TAlbums.btnConnectTestClick(Sender: TObject);
-begin
-  //ShowMessage('Test button clicked.');
-end;
-
+{ Called when clicking a cell in the album list }
 procedure TAlbums.colCellClick(Column: TColumn);
 begin
-  //ShowMessage('Column cell clicked: ' + Column.FieldName);
-
   if (Column.FieldName = FIELD_ALBUM) and CanEditDataset then
-  begin
-    //ShowMessage('You clicked on ALBUM column, loading album...');
     HandleAlbumClick(dmMain.qAdressen.FieldByName(FIELD_ID).AsInteger);
-  end;
 end;
 
+{ Handles what happens when an album is clicked }
 procedure TAlbums.HandleAlbumClick(AlbumID: Integer);
-var
-  Choice: Integer;
 begin
-  //ShowMessage('Handling click on album with ID = ' + IntToStr(AlbumID));
-
   DisplayCurrentRecord;
 
-  Choice := MessageDlg('For editing album click "Yes", for viewing tracks click "No".',
-                       mtConfirmation, [mbYes, mbNo], 0);
+  case MessageDlg('Edit album (Yes) or view tracks (No)?',
+                  mtConfirmation, [mbYes, mbNo], 0) of
+    mrYes:
+      begin
+        dmMain.qAdressen.Edit;
+        // optional: editing album ID AlbumID
+      end;
+    mrNo:
+      begin
+        if not Assigned(Tracks) then
+          Application.CreateForm(TTracks, Tracks);
 
-  if Choice = mrYes then
-  begin
-    if not (dmMain.qAdressen.State in [dsEdit, dsInsert]) then
-      dmMain.qAdressen.Edit;
-
-    Log('Editing album with ID ' + IntToStr(AlbumID));
-    //ShowMessage('Album is now in edit mode.');
-  end
-  else
-  begin
-    if not Assigned(Tracks) then
-      Application.CreateForm(TTracks, Tracks);
-
-    Tracks.LoadSongsFromAlbum(AlbumID);
-    Tracks.Show;
-    Log('Viewing tracks for album ID ' + IntToStr(AlbumID));
-    //ShowMessage('Track list opened for album ID ' + IntToStr(AlbumID));
+        Tracks.LoadSongsFromAlbum(AlbumID);
+        Tracks.Show;
+        // optional: viewing tracks for album ID AlbumID
+      end;
   end;
 end;
 
+{ Loads and saves an image to the album record }
 procedure TAlbums.btnLoadImageClick(Sender: TObject);
 var
   FileStream, BlobStream: TStream;
   Field: TField;
 begin
-  //ShowMessage('Load Image button clicked.');
+  if not CanEditDataset then Exit;
+  if not OpenDialog1.Execute then Exit;
 
-  if not CanEditDataset then
-  begin
-    //ShowMessage('Cannot load image: Dataset not ready.');
-    Exit;
-  end;
+  try
+    Field := dmMain.qAdressen.FieldByName(FIELD_ALBUM_COVER);
+    if not Assigned(Field) or (Field.DataType <> ftBlob) then
+      raise Exception.Create('AlbumCover field missing or not a BLOB');
 
-  if OpenDialog1.Execute then
-  begin
+    dmMain.qAdressen.Edit;
+
+    FileStream := TFileStream.Create(OpenDialog1.FileName, fmOpenRead);
     try
-      Field := dmMain.qAdressen.FieldByName(FIELD_ALBUM_COVER);
-      if not Assigned(Field) or (Field.DataType <> ftBlob) then
-        raise Exception.Create('AlbumCover field missing or not a BLOB');
-
-      if not (dmMain.qAdressen.State in [dsEdit, dsInsert]) then
-        dmMain.qAdressen.Edit;
-
-      FileStream := TFileStream.Create(OpenDialog1.FileName, fmOpenRead);
+      BlobStream := dmMain.qAdressen.CreateBlobStream(Field, bmWrite);
       try
-        BlobStream := dmMain.qAdressen.CreateBlobStream(Field, bmWrite);
-        try
-          BlobStream.CopyFrom(FileStream, FileStream.Size);
-        finally
-          BlobStream.Free;
-        end;
+        BlobStream.CopyFrom(FileStream, FileStream.Size);
       finally
-        FileStream.Free;
+        BlobStream.Free;
       end;
-
-      dmMain.qAdressen.Post;
-      DisplayCurrentRecord;
-      Log('Image loaded and saved for current album.');
-      //ShowMessage('Image saved successfully!');
-    except
-      on E: EStreamError do
-      begin
-        Log('Stream error while saving image: ' + E.Message);
-        //ShowMessage('Stream error: ' + E.Message);
-      end;
-      on E: EDatabaseError do
-      begin
-        Log('Database error while saving image: ' + E.Message);
-        //ShowMessage('Database error: ' + E.Message);
-      end;
-      on E: Exception do
-      begin
-        Log('Unknown error while saving image: ' + E.Message);
-        //ShowMessage('Error saving image: ' + E.Message);
-      end;
+    finally
+      FileStream.Free;
     end;
-  end
-  else
-  begin
-    //ShowMessage('Image selection cancelled.');
+
+    dmMain.qAdressen.Post;
+    DisplayCurrentRecord;
+    ShowMessage('Image saved successfully!');
+    // optional: image saved for current album
+  except
+    on E: Exception do
+      ShowMessage('Error saving image: ' + E.Message);
   end;
 end;
 
