@@ -11,7 +11,6 @@
       <XPManifest>
         <DpiAware Value="True"/>
       </XPManifest>
-      <Icon Value="0"/>
     </General>
     <BuildModes>
       <Item Name="Default" Default="True"/>
@@ -25,18 +24,6 @@
     </RunParams>
     <RequiredPackages>
       <Item>
-        <PackageName Value="RunTimeTypeInfoControls"/>
-      </Item>
-      <Item>
-        <PackageName Value="ibprovider10"/>
-      </Item>
-      <Item>
-        <PackageName Value="unidac10"/>
-      </Item>
-      <Item>
-        <PackageName Value="dclunidac10"/>
-      </Item>
-      <Item>
         <PackageName Value="LCL"/>
       </Item>
     </RequiredPackages>
@@ -46,7 +33,7 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="mainform.pas"/>
+        <Filename Value="main/mainform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Albums"/>
         <HasResources Value="True"/>
@@ -54,49 +41,31 @@
         <UnitName Value="MainForm"/>
       </Unit>
       <Unit>
-        <Filename Value="dDatenbank.pas"/>
+        <Filename Value="helpers/lyricsfetcher.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="LyricsFetcher"/>
+      </Unit>
+      <Unit>
+        <Filename Value="data/dDatenbank.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="dmMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
       </Unit>
       <Unit>
-        <Filename Value="songsformunit.pas"/>
+        <Filename Value="songsform/songsformunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Tracks"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="SongsFormUnit"/>
+      </Unit>
+      <Unit>
+        <Filename Value="main/songsformunit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Tracks"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SongsFormUnit"/>
-      </Unit>
-      <Unit>
-        <Filename Value="uistyle.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form1"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="UIStyle"/>
-      </Unit>
-      <Unit>
-        <Filename Value="albumexplorerapi.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="AlbumExplorerAPI"/>
-      </Unit>
-      <Unit>
-        <Filename Value="dmapi.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="dmAPI"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="DataModule"/>
-        <UnitName Value="lDatenBank"/>
-      </Unit>
-      <Unit>
-        <Filename Value="uapi.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="uAPI"/>
-      </Unit>
-      <Unit>
-        <Filename Value="reastapi.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="REASTAPI"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -107,12 +76,18 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+      <OtherUnitFiles Value="/home/LAlbrecht/ComponentsLaz/UniDAC/Source/;../../ComponentsLaz/UniDAC/Source;../../ComponentsLaz/UniDAC/Source/UniProviders/InterBase;../../AlbumExplorer/songsform;helpers;data;main;songsform"/>
+      <UnitOutputDirectory Value="/home/LAlbrecht/ComponentsLaz/UniDAC/Source"/>
     </SearchPaths>
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf3"/>
       </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
     </Linking>
   </CompilerOptions>
   <Debugging>

@@ -5,7 +5,6 @@ object dmMain: TdmMain
   VerticalOffset = 0
   Width = 817
   object cDatenbank: TUniConnection
-    Connected = True
     ProviderName = 'InterBase'
     Database = '/database/livia.fdb'
     Username = 'sysdba'

@@ -3,20 +3,21 @@ program Album;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}cthreads,{$ENDIF}
-  Interfaces, Forms, Classes, runtimetypeinfocontrols,
-  MainForm, dDatenbank, unidac10, ibprovider10,
-  SongsFormUnit;
+  Interfaces,
+  Forms, LyricsFetcher, dDatenbank, MainForm, SongsFormUnit;
 
 {$R *.res}
 
 begin
+  RequireDerivedFormResource := True;
+  Application.Scaled:=True;
+  {$PUSH}{$WARN 5044 OFF}
+  Application.MainFormOnTaskbar := True;
+  {$POP}
   Application.Initialize;
-  Application.CreateForm(TdmMain, dmMain);
   Application.CreateForm(TAlbums, Albums);
   Application.CreateForm(TTracks, Tracks);
-
+  Application.CreateForm(TdmMain, dmMain);
   Application.Run;
 end.
-
 

@@ -1,16 +1,17 @@
 object Tracks: TTracks
   Left = 533
-  Height = 680
+  Height = 771
   Top = 31
-  Width = 713
+  Width = 705
   Caption = 'Tracks'
-  ClientHeight = 680
-  ClientWidth = 713
+  ClientHeight = 771
+  ClientWidth = 705
+  Color = 1054487
   LCLVersion = '4.2.0.0'
-  object DBNavigator1: TDBNavigator
-    Left = 240
+  object navSongs: TDBNavigator
+    Left = 56
     Height = 25
-    Top = 320
+    Top = 424
     Width = 241
     BevelOuter = bvNone
     ChildSizing.EnlargeHorizontal = crsScaleChilds
@@ -25,38 +26,62 @@ object Tracks: TTracks
     Options = []
     TabOrder = 0
   end
-  object DBGrid1: TDBGrid
-    Left = 0
-    Height = 336
-    Top = 344
+  object dbgSongs: TDBGrid
+    Left = -8
+    Height = 208
+    Top = 552
     Width = 916
     Align = alCustom
-    Color = clWindow
+    AlternateColor = 1054487
+    BorderStyle = bsNone
+    Color = 6315609
     Columns = <    
       item
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Sans'
+        Font.Style = [fsBold]
         Title.Caption = 'ID'
         Width = 100
         FieldName = 'ID'
       end    
       item
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Sans'
+        Font.Style = [fsBold]
         Title.Caption = 'AlbumID'
         Width = 100
         FieldName = 'ALBUMID'
       end    
       item
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Sans'
+        Font.Style = [fsBold]
         Title.Caption = 'SongTitle'
         Width = 400
         FieldName = 'SONGTITLE'
       end    
       item
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Sans'
+        Font.Style = [fsBold]
         Title.Caption = 'Duration'
         Width = 100
         FieldName = 'DURATION'
       end>
     DataSource = dmMain.sqSongs
+    Font.Color = 1054487
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
+    ParentFont = False
+    PopupMenu = pmSongs
     TabOrder = 1
   end
-  object DBImage1: TDBImage
+  object imgSongCover: TDBImage
     Left = 32
     Height = 200
     Top = 16
@@ -66,24 +91,46 @@ object Tracks: TTracks
     Stretch = True
     Transparent = True
   end
-  object DBMemo1: TDBMemo
-    Left = 32
-    Height = 96
-    Top = 216
-    Width = 280
+  object dbMemoSongInfo: TDBMemo
+    Left = 31
+    Height = 80
+    Top = 248
+    Width = 283
+    BorderStyle = bsNone
+    Color = 1054487
     DataField = 'DESCRIPTION'
     DataSource = dmMain.sqAdressen
+    Font.Color = clWhite
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
+    ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 2
   end
-  object DBMemo2: TDBMemo
-    Left = 408
-    Height = 296
+  object dbMemoLyrics: TDBMemo
+    Left = 344
+    Height = 504
     Top = 16
-    Width = 280
+    Width = 352
+    BorderStyle = bsNone
+    Color = 1054487
     DataField = 'LYRICS'
     DataSource = dmMain.sqSongs
+    Font.Color = clWhite
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
+    ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 3
+  end
+  object pmSongs: TPopupMenu
+    Left = 336
+    Top = 16
+    object miFetchLyrics: TMenuItem
+      Caption = 'Fetch Lyrics'
+      OnClick = miFetchLyricsClick
+    end
   end
 end

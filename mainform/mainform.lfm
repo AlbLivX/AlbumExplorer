@@ -6,21 +6,24 @@ object Albums: TAlbums
   Caption = 'Albums'
   ClientHeight = 670
   ClientWidth = 890
-  Color = 2171169
+  Color = 1054487
+  Font.Color = 12629936
   Font.Height = -13
   Font.Name = 'Sans'
   Font.Style = [fsBold]
-  object col: TDBGrid
+  LCLVersion = '4.2.0.0'
+  object dbgAlbums: TDBGrid
     Left = 16
     Height = 344
     Top = 312
     Width = 855
     Align = alCustom
     AlternateColor = 921102
-    Color = clWhite
+    BorderStyle = bsNone
+    Color = 6315609
     Columns = <    
       item
-        Font.Color = clBlack
+        Font.Color = clWhite
         Font.Height = -13
         Font.Name = 'Sans'
         Font.Style = [fsBold]
@@ -56,24 +59,25 @@ object Albums: TAlbums
         FieldName = 'ReleaseYear'
       end>
     DataSource = dmMain.sqAdressen
-    Font.Color = clBlack
+    Font.Color = 1054487
     Font.Height = -13
     Font.Name = 'Sans'
     Font.Style = [fsBold]
     ParentFont = False
+    Scrollbars = ssVertical
     TabOrder = 0
   end
-  object Img: TImage
-    Left = 96
-    Height = 215
-    Top = 48
-    Width = 280
+  object imgAlbumCover: TImage
+    Left = 16
+    Height = 239
+    Top = 24
+    Width = 312
     Stretch = True
   end
-  object DBNavigator1: TDBNavigator
-    Left = 576
+  object navAlbums: TDBNavigator
+    Left = 512
     Height = 30
-    Top = 209
+    Top = 24
     Width = 200
     BevelOuter = bvNone
     ChildSizing.EnlargeHorizontal = crsScaleChilds
@@ -84,7 +88,7 @@ object Albums: TAlbums
     ChildSizing.ControlsPerLine = 100
     ClientHeight = 30
     ClientWidth = 200
-    Font.Color = clBlack
+    Font.Color = 1054487
     Font.Height = -13
     Font.Name = 'Sans'
     Font.Style = [fsBold]
@@ -92,28 +96,28 @@ object Albums: TAlbums
     ParentFont = False
     TabOrder = 1
   end
-  object DBMemo1: TDBMemo
-    Left = 496
-    Height = 103
-    Top = 96
-    Width = 280
+  object dbMemoAlbumDescription: TDBMemo
+    Left = 360
+    Height = 178
+    Top = 85
+    Width = 511
     HelpType = htKeyword
     Align = alCustom
     BorderStyle = bsNone
-    Color = 3618615
+    Color = 1054487
     DataField = 'DESCRIPTION'
     DataSource = dmMain.sqAdressen
-    Font.Color = clBlack
+    Font.Color = clWhite
     Font.Height = -13
     Font.Name = 'Sans'
     Font.Style = [fsBold, fsItalic]
     ParentFont = False
     TabOrder = 2
   end
-  object btnConnect: TButton
-    Left = 496
+  object btnDBConnect: TButton
+    Left = 799
     Height = 29
-    Top = 209
+    Top = 25
     Width = 72
     Caption = 'Connect'
     Font.Color = 34560
@@ -122,23 +126,23 @@ object Albums: TAlbums
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 3
-    OnClick = btnConnectClick
+    OnClick = btnDBConnectClick
   end
-  object btnLoadImage: TButton
-    Left = 168
+  object btnLoadAlbumCover: TButton
+    Left = 128
     Height = 29
     Top = 272
     Width = 88
     Caption = 'Load Image'
-    Font.Color = clBlack
+    Font.Color = 1054487
     Font.Height = -13
     Font.Name = 'Sans'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 4
-    OnClick = btnLoadImageClick
+    OnClick = btnLoadAlbumCoverClick
   end
-  object OpenDialog1: TOpenDialog
+  object dlgOpenAlbumCover: TOpenDialog
     Left = 24
     Top = 16
   end

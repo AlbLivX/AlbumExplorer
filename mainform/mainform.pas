@@ -6,21 +6,22 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, DBGrids, ExtCtrls,
-  DBCtrls, StdCtrls, Buttons, RTTICtrls, dDatenbank, SongsFormUnit, DB, Uni;
+  DBCtrls, StdCtrls, Buttons, CheckLst, dDatenbank, SongsFormUnit,
+  DB, Uni;
 
 type
   { TAlbums }
 
   TAlbums = class(TForm)
-    btnConnect: TButton;
-    btnLoadImage: TButton;
-    col: TDBGrid;
-    DBMemo1: TDBMemo;
-    DBNavigator1: TDBNavigator;
-    Img: TImage;
+    btnDBConnect: TButton;
+    btnLoadAlbumCover: TButton;
+    dbgAlbums: TDBGrid;
+    dbMemoAlbumDescription: TDBMemo;
+    navAlbums: TDBNavigator;
+    imgAlbumCover: TImage;
     OpenDialog1: TOpenDialog;
-    procedure btnConnectClick(Sender: TObject);
-    procedure btnLoadImageClick(Sender: TObject);
+    procedure btnDBConnectClick(Sender: TObject);
+    procedure btnLoadAlbumCoverClick(Sender: TObject);
     procedure colCellClick(Column: TColumn);
   private
     procedure DisplayCurrentRecord(DataSet: TDataSet = nil);
@@ -45,7 +46,7 @@ implementation
 uses
   Variants;
 
-{ Simple check for dataset availability }
+//dataset available?
 function TAlbums.CanEditDataset: Boolean;
 begin
   Result := Assigned(dmMain)
@@ -53,7 +54,7 @@ begin
          and not dmMain.qAdressen.IsEmpty;
 end;
 
-{ Displays current album record’s text and image }
+//Description and Album Cover
 procedure TAlbums.DisplayCurrentRecord(DataSet: TDataSet);
 var
   Field: TField;
@@ -61,28 +62,29 @@ var
 begin
   if not CanEditDataset then Exit;
 
-  DBMemo1.Text := dmMain.qAdressen.FieldByName(FIELD_DESCRIPTION).AsString;
-  Img.Picture := nil;
+  dbMemoAlbumDescription.Text := dmMain.qAdressen.FieldByName(FIELD_DESCRIPTION).AsString;
+  imgAlbumCover.Picture := nil;
 
   Field := dmMain.qAdressen.FieldByName(FIELD_ALBUM_COVER);
   if not Field.IsNull then
   begin
     BlobStream := dmMain.qAdressen.CreateBlobStream(Field, bmRead);
     try
-      Img.Picture.LoadFromStream(BlobStream);
+      imgAlbumCover.Picture.LoadFromStream(BlobStream);
     finally
       BlobStream.Free;
     end;
   end;
 end;
 
-{ Connects to database and loads albums dataset }
-procedure TAlbums.btnConnectClick(Sender: TObject);
+//Connects to db and loads albums ds
+procedure TAlbums.btnDBConnectClick(Sender: TObject);
 begin
-  ShowMessage('Connect button clicked!');
+  writeln('Connect button clicked!');
+
   if not Assigned(dmMain) then
   begin
-    ShowMessage('dmMain is not assigned!');
+    writeln('dmMain is not assigned!');
     Exit;
   end;
 
@@ -93,27 +95,29 @@ begin
     if not dmMain.qAdressen.Active then
       dmMain.qAdressen.Open;
 
+    writeln('Dataset opened. Record count: ', dmMain.qAdressen.RecordCount);
+
     DisplayCurrentRecord;
 
     dmMain.qAdressen.AfterScroll := @DisplayCurrentRecord;
-    col.OnCellClick := @colCellClick;
-
-     ShowMessage('Database and dataset connected!');
+    dbgAlbums.OnCellClick := @colCellClick;
 
   except
     on E: Exception do
-      ShowMessage('Database error: ' + E.Message);
+      writeln('Database error: ', E.Message);
   end;
 end;
 
-{ Called when clicking a cell in the album list }
+
+//Called on cell click in the table
 procedure TAlbums.colCellClick(Column: TColumn);
 begin
   if (Column.FieldName = FIELD_ALBUM) and CanEditDataset then
     HandleAlbumClick(dmMain.qAdressen.FieldByName(FIELD_ID).AsInteger);
 end;
 
-{ Handles what happens when an album is clicked }
+
+//on an Album Click Handler
 procedure TAlbums.HandleAlbumClick(AlbumID: Integer);
 begin
   DisplayCurrentRecord;
@@ -123,7 +127,6 @@ begin
     mrYes:
       begin
         dmMain.qAdressen.Edit;
-        // optional: editing album ID AlbumID
       end;
     mrNo:
       begin
@@ -132,13 +135,12 @@ begin
 
         Tracks.LoadSongsFromAlbum(AlbumID);
         Tracks.Show;
-        // optional: viewing tracks for album ID AlbumID
       end;
   end;
 end;
 
-{ Loads and saves an image to the album record }
-procedure TAlbums.btnLoadImageClick(Sender: TObject);
+//loads +/ saves imgs  to Album Record
+procedure TAlbums.btnLoadAlbumCoverClick(Sender: TObject);
 var
   FileStream, BlobStream: TStream;
   Field: TField;
@@ -168,7 +170,6 @@ begin
     dmMain.qAdressen.Post;
     DisplayCurrentRecord;
     ShowMessage('Image saved successfully!');
-    // optional: image saved for current album
   except
     on E: Exception do
       ShowMessage('Error saving image: ' + E.Message);
