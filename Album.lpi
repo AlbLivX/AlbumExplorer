@@ -33,14 +33,6 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="main/mainform.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="Albums"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="MainForm"/>
-      </Unit>
-      <Unit>
         <Filename Value="helpers/lyricsfetcher.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="LyricsFetcher"/>
@@ -56,16 +48,17 @@
         <Filename Value="songsform/songsformunit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Tracks"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SongsFormUnit"/>
       </Unit>
       <Unit>
-        <Filename Value="main/songsformunit.pas"/>
+        <Filename Value="mainform/mainform.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Tracks"/>
+        <ComponentName Value="Albums"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="SongsFormUnit"/>
+        <UnitName Value="MainForm"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -76,7 +69,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="/home/LAlbrecht/ComponentsLaz/UniDAC/Source/;../../ComponentsLaz/UniDAC/Source;../../ComponentsLaz/UniDAC/Source/UniProviders/InterBase;../../AlbumExplorer/songsform;helpers;data;main;songsform"/>
+      <OtherUnitFiles Value="/home/LAlbrecht/ComponentsLaz/UniDAC/Source/;../../ComponentsLaz/UniDAC/Source;../../ComponentsLaz/UniDAC/Source/UniProviders/InterBase;../../AlbumExplorer/songsform;helpers;data;main;songsform;mainform"/>
       <UnitOutputDirectory Value="/home/LAlbrecht/ComponentsLaz/UniDAC/Source"/>
     </SearchPaths>
     <Linking>
