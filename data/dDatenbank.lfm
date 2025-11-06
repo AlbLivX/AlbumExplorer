@@ -9,8 +9,8 @@ object dmMain: TdmMain
     Database = '/database/livia.fdb'
     Username = 'sysdba'
     Server = 'hydbdev1'
-    Left = 132
-    Top = 129
+    Left = 104
+    Top = 184
     EncryptedPassword = '8CFF93FF8AFFCFFFCEFF'
   end
   object qAdressen: TUniQuery
@@ -19,17 +19,17 @@ object dmMain: TdmMain
       'SELECT ID, Album, Artist, ReleaseYear, Description, AlbumCover FROM Album'
     )
     FilterOptions = []
-    Left = 246
-    Top = 129
+    Left = 290
+    Top = 130
   end
   object sqAdressen: TUniDataSource
     DataSet = qAdressen
-    Left = 352
+    Left = 432
     Top = 128
   end
   object InterBaseUniProvider1: TInterBaseUniProvider
-    Left = 480
-    Top = 128
+    Left = 664
+    Top = 184
   end
   object qSongs: TUniQuery
     Connection = cDatenbank
@@ -37,8 +37,8 @@ object dmMain: TdmMain
       'SELECT s.ID, s.SongTitle, s.Duration, s.AlbumID, a.Album, a.Artist, a.ReleaseYear, a.Description, a.AlbumCover, s.Lyrics FROM Songs s JOIN Album a ON s.AlbumID = a.ID WHERE s.AlbumID = :AlbumID'
     )
     FilterOptions = []
-    Left = 248
-    Top = 216
+    Left = 290
+    Top = 217
     ParamData = <    
       item
         DataType = ftUnknown
@@ -47,7 +47,7 @@ object dmMain: TdmMain
   end
   object sqSongs: TUniDataSource
     DataSet = qSongs
-    Left = 344
+    Left = 432
     Top = 216
   end
 end

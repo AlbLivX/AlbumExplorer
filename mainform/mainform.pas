@@ -6,28 +6,40 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, DBGrids, ExtCtrls,
-  DBCtrls, StdCtrls, Buttons, CheckLst, dDatenbank, SongsFormUnit,
-  DB, Uni;
+  DBCtrls, StdCtrls, Buttons, dDatenbank, SongsFormUnit, DB, Uni;
 
 type
   { TAlbums }
 
   TAlbums = class(TForm)
-    btnDBConnect: TButton;
-    btnLoadAlbumCover: TButton;
-    dbgAlbums: TDBGrid;
+
+    btnDBConnect:           TButton;
+    btnLoadAlbumCover:      TButton;
+    btnAlbumSearch:         TButton;
+    btnClearSearch:         TSpeedButton;
+    dbgAlbums:              TDBGrid;
     dbMemoAlbumDescription: TDBMemo;
-    navAlbums: TDBNavigator;
-    imgAlbumCover: TImage;
-    OpenDialog1: TOpenDialog;
-    procedure btnDBConnectClick(Sender: TObject);
-    procedure btnLoadAlbumCoverClick(Sender: TObject);
-    procedure colCellClick(Column: TColumn);
+    edtAlbumSearch:         TEdit;
+    imgAlbumCover:          TImage;
+    dlgAlbumCover:          TOpenDialog;
+    navAlbums:              TDBNavigator;
+
+
+
+    procedure btnAlbumSearchClick    (Sender: TObject);
+    procedure btnClearSearchClick   (Sender: TObject);
+    procedure btnDBConnectClick      (Sender: TObject);
+    procedure btnLoadAlbumCoverClick (Sender: TObject);
+    procedure colCellClick           (Column: TColumn);
+    procedure edtAlbumSearchChange   (Sender: TObject);
+
   private
-    procedure DisplayCurrentRecord(DataSet: TDataSet = nil);
-    procedure HandleAlbumClick(AlbumID: Integer);
-    function CanEditDataset: Boolean;
+    procedure DisplayCurrentRecord (DataSet: TDataSet = nil);
+    procedure HandleAlbumClick     (AlbumID: Integer);
+    function  CanEditDataset:      Boolean;
+
   public
+
   end;
 
 const
@@ -37,14 +49,11 @@ const
   FIELD_ALBUM = 'ALBUM';
 
 var
-  Albums: TAlbums;
+  Albums:     TAlbums;
 
 implementation
 
 {$R *.lfm}
-
-uses
-  Variants;
 
 //dataset available?
 function TAlbums.CanEditDataset: Boolean;
@@ -108,6 +117,49 @@ begin
   end;
 end;
 
+procedure TAlbums.btnAlbumSearchClick(Sender: TObject);
+var
+  FilterText: string;
+begin
+  if not Assigned(dmMain) or not dmMain.qAdressen.Active then Exit;
+
+  FilterText := Trim(edtAlbumSearch.Text);
+  //Clear filter if empty
+  if FilterText = '' then
+  begin
+    dmMain.qAdressen.Filtered := False;
+    Exit;
+  end;
+
+  //Apply Filter
+  dmMain.qAdressen.Filtered   := False;
+  dmMain.qAdressen.Filter := Format('(ALBUM LIKE ''%%%s%%'') OR (ARTIST LIKE ''%%%s%%'')',
+                                   [FilterText, FilterText]);
+  dmMain.qAdressen.Filtered   := True;
+
+  //Automatically display the first record’s cover after filtering
+  if not dmMain.qAdressen.ISEmpty then
+    DisplayCurrentRecord;
+end;
+
+
+procedure TAlbums.btnClearSearchClick(Sender: TObject);
+begin
+  edtAlbumSearch.Text := '';
+  edtAlbumSearch.SetFocus;
+  dmMain.qAdressen.Filtered := False;
+    btnAlbumSearchClick(Sender);
+end;
+
+
+ procedure TAlbums.edtAlbumSearchChange(Sender: TObject);
+begin
+  if Assigned(btnClearSearch) and Assigned(edtAlbumSearch) then
+  begin
+    btnClearSearch.Visible := edtAlbumSearch.Text <> '';
+    btnAlbumSearchClick(Sender);
+  end;
+end;
 
 //Called on cell click in the table
 procedure TAlbums.colCellClick(Column: TColumn);
@@ -115,7 +167,6 @@ begin
   if (Column.FieldName = FIELD_ALBUM) and CanEditDataset then
     HandleAlbumClick(dmMain.qAdressen.FieldByName(FIELD_ID).AsInteger);
 end;
-
 
 //on an Album Click Handler
 procedure TAlbums.HandleAlbumClick(AlbumID: Integer);
@@ -146,7 +197,7 @@ var
   Field: TField;
 begin
   if not CanEditDataset then Exit;
-  if not OpenDialog1.Execute then Exit;
+  if not dlgAlbumCover.Execute then Exit;
 
   try
     Field := dmMain.qAdressen.FieldByName(FIELD_ALBUM_COVER);
@@ -155,7 +206,7 @@ begin
 
     dmMain.qAdressen.Edit;
 
-    FileStream := TFileStream.Create(OpenDialog1.FileName, fmOpenRead);
+    FileStream := TFileStream.Create(dlgAlbumCover.FileName, fmOpenRead);
     try
       BlobStream := dmMain.qAdressen.CreateBlobStream(Field, bmWrite);
       try

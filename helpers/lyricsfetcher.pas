@@ -45,7 +45,7 @@ begin
       end;
     except
       on E: Exception do
-        writeln('⚠️ Error fetching lyrics for "', Title, '": ', E.Message);
+        writeln(' Error fetching lyrics for "', Title, '": ', E.Message);
     end;
   finally
     Client.Free;

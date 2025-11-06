@@ -24,6 +24,12 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="unidac10"/>
+      </Item>
+      <Item>
+        <PackageName Value="dclunidac10"/>
+      </Item>
+      <Item>
         <PackageName Value="LCL"/>
       </Item>
     </RequiredPackages>
@@ -59,6 +65,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainForm"/>
+      </Unit>
+      <Unit>
+        <Filename Value="helpers/searchhelper.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SearchHelper"/>
       </Unit>
     </Units>
   </ProjectOptions>

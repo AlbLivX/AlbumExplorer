@@ -24,7 +24,7 @@ type
 
   end;
 
-var
+  var
   dmMain: TdmMain;
 
 implementation

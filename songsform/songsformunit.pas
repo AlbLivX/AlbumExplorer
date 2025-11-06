@@ -103,7 +103,7 @@ end;
 //Handles Column Click
 procedure TTracks.colClick(Column: TColumn);
 begin
-  if CanEditDataset and (Column.FieldName = 'SongTitle') then  // change it to ID instead of SongTitle!
+  if CanEditDataset and (Column.FieldName = 'SongTitle') then
     HandleSongClick;
 end;
 
@@ -155,5 +155,6 @@ begin
 end;
 
 end.
+
 
 

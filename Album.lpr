@@ -4,7 +4,7 @@ program Album;
 
 uses
   Interfaces,
-  Forms, LyricsFetcher, dDatenbank, MainForm, SongsFormUnit;
+  Forms, unidac10, LyricsFetcher, dDatenbank, MainForm, SongsFormUnit, DB;
 
 {$R *.res}
 
