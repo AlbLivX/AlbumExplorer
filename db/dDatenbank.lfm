@@ -5,6 +5,7 @@ object dmMain: TdmMain
   VerticalOffset = 0
   Width = 817
   object cDatenbank: TUniConnection
+    Connected = True
     ProviderName = 'InterBase'
     Database = '/database/livia.fdb'
     Username = 'sysdba'
@@ -16,7 +17,13 @@ object dmMain: TdmMain
   object qAdressen: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT ID, Album, Artist, ReleaseYear, Description, AlbumCover FROM Album'
+      'SELECT {FIELD_ID}, '
+      '       {FIELD_ALBUM}, '
+      '       {FIELD_ARTIST}, '
+      '       {FIELD_RELEASE_YEAR}, '
+      '       {FIELD_DESCRIPTION}, '
+      '       {FIELD_ALBUM_COVER}'
+      'FROM Album;'
     )
     FilterOptions = []
     Left = 246
@@ -34,16 +41,71 @@ object dmMain: TdmMain
   object qSongs: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT s.ID, s.SongTitle, s.Duration, s.AlbumID, a.Album, a.Artist, a.ReleaseYear, a.Description, a.AlbumCover, s.Lyrics FROM Songs s JOIN Album a ON s.AlbumID = a.ID WHERE s.AlbumID = :AlbumID'
+      'SELECT s.{FIELD_SONG_ID}, '
+      '       s.{FIELD_SONG_TITLE}, '
+      '       s.Duration, '
+      '       s.{FIELD_ALBUM_ID}, '
+      '       a.{FIELD_ALBUM}, '
+      '       a.{FIELD_ARTIST}, '
+      '       a.{FIELD_RELEASE_YEAR}, '
+      '       a.{FIELD_DESCRIPTION}, '
+      '       a.{FIELD_ALBUM_COVER}, '
+      '       s.{FIELD_LYRICS}'
+      'FROM Songs s'
+      'JOIN Album a ON s.{FIELD_ALBUM_ID} = a.{FIELD_ID}'
+      'WHERE s.{FIELD_ALBUM_ID} = :{FIELD_ALBUM_ID}'
     )
     FilterOptions = []
     Left = 248
     Top = 216
-    ParamData = <    
-      item
-        DataType = ftUnknown
-        Name = 'AlbumID'
-      end>
+    object qSongsID: TLongintField
+      FieldKind = fkData
+      FieldName = 'ID'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = True
+    end
+    object qSongsSONGTITLE: TStringField
+      FieldKind = fkData
+      FieldName = 'SONGTITLE'
+      Index = 1
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = True
+      Size = 1020
+    end
+    object qSongsARTIST: TStringField
+      FieldKind = fkData
+      FieldName = 'ARTIST'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = True
+      Required = False
+      Size = 400
+    end
+    object qSongsLYRICS: TStringField
+      FieldKind = fkData
+      FieldName = 'LYRICS'
+      Index = 3
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 16000
+    end
+    object qSongsALBUMCOVER: TBlobField
+      FieldKind = fkData
+      FieldName = 'ALBUMCOVER'
+      Index = 4
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = True
+      Required = False
+    end
   end
   object sqSongs: TUniDataSource
     DataSet = qSongs

@@ -67,6 +67,7 @@ object Albums: TAlbums
     ParentFont = False
     Scrollbars = ssVertical
     TabOrder = 0
+    OnCellClick = HandleAlbumColumnClick
   end
   object imgAlbumCover: TImage
     Left = 16

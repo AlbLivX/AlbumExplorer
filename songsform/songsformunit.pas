@@ -6,22 +6,25 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, DBCtrls, DBGrids,
-  StdCtrls, ExtCtrls, Menus, dDatenbank, DB, LyricsFetcher;
+  StdCtrls, ExtCtrls, Menus, dDatenbank, DB, LyricsFetcher, uConstants;
 
 type
   TTracks = class(TForm)
-    dbgSongs: TDBGrid;
-    imgSongCover: TDBImage;
+    dbgSongs:       TDBGrid;
+    imgSongCover:   TDBImage;
     dbMemoSongInfo: TDBMemo;
-    dbMemoLyrics: TDBMemo;
-    navSongs: TDBNavigator;
-    miFetchLyrics: TMenuItem;
-    pmSongs: TPopupMenu;
+    dbMemoLyrics:   TDBMemo;
+    navSongs:       TDBNavigator;
+    miFetchLyrics:  TMenuItem;
+    pmSongs:        TPopupMenu;
+
     procedure miFetchLyricsClick(Sender: TObject);
+
   private
     function CanEditDataset: Boolean;
     procedure DisplayCurrentSong;
     procedure colClick(Column: TColumn);
+
   public
     procedure LoadSongsFromAlbum(AlbumID: Integer);
     procedure HandleSongClick;
@@ -34,20 +37,29 @@ implementation
 
 {$R *.lfm}
 
-{ TTracks }
-// Fetch Lyrics Menu Item on Click
+{===========================}
+{ Menu Actions              }
+{===========================}
+
 procedure TTracks.miFetchLyricsClick(Sender: TObject);
 begin
   HandleSongClick;
 end;
 
-//used before reading/writing data to avoid errors
+{===========================}
+{ Dataset Utilities         }
+{===========================}
+
+
 function TTracks.CanEditDataset: Boolean;
 begin
-  Result := Assigned(dmMain) and dmMain.qSongs.Active and not dmMain.qSongs.IsEmpty;
+  Result := Assigned(dmMain)
+        and Assigned(dmMain.qSongs)
+        and dmMain.qSongs.Active
+        and not dmMain.qSongs.IsEmpty;
 end;
 
-//Shows current song data & Handles missing/corrupt imgs
+
 procedure TTracks.DisplayCurrentSong;
 var
   Field: TField;
@@ -55,16 +67,14 @@ var
 begin
   if not CanEditDataset then Exit;
 
-  // lyrics, available?
-  Field := dmMain.qSongs.FindField('Lyrics');
+  Field := dmMain.qSongs.FindField(FIELD_LYRICS);
   if Assigned(Field) and (Trim(Field.AsString) <> '') then
     dbMemoLyrics.Text := Field.AsString
   else
     dbMemoLyrics.Clear;
 
-  // song cover
   imgSongCover.Picture := nil;
-  Field := dmMain.qSongs.FindField('SongCover');
+  Field := dmMain.qSongs.FindField(FIELD_ALBUM_COVER);
   if Assigned(Field) and (Field.DataType = ftBlob) and not Field.IsNull then
   begin
     BlobStream := dmMain.qSongs.CreateBlobStream(Field, bmRead);
@@ -77,7 +87,7 @@ begin
           on E: Exception do
           begin
             writeln('Could not load song cover for song ID ',
-                    dmMain.qSongs.FieldByName('ID').AsInteger, ': ', E.Message);
+                    dmMain.qSongs.FieldByName(FIELD_SONG_ID).AsInteger, ': ', E.Message);
             imgSongCover.Picture := nil;
           end;
         end;
@@ -88,7 +98,11 @@ begin
   end;
 end;
 
-//Loads songs from Album into qSongs dataset & display in grid
+{===========================}
+{ Database Actions          }
+{===========================}
+
+
 procedure TTracks.LoadSongsFromAlbum(AlbumID: Integer);
 begin
   if not Assigned(dmMain) then Exit;
@@ -96,18 +110,26 @@ begin
     dmMain.cDatenbank.Connected := True;
 
   dmMain.qSongs.Close;
-  dmMain.qSongs.ParamByName('AlbumID').AsInteger := AlbumID;    //placeholder
+  dmMain.qSongs.ParamByName(PARAM_ALBUM_ID).AsInteger := AlbumID;
   dmMain.qSongs.Open;
 end;
 
-//Handles Column Click
+{===========================}
+{ Grid Handlers             }
+{===========================}
+
+
 procedure TTracks.colClick(Column: TColumn);
 begin
-  if CanEditDataset and (Column.FieldName = 'SongTitle') then
+  if CanEditDataset and (Column.FieldName = FIELD_SONG_TITLE) then
     HandleSongClick;
 end;
 
-//Displayes song data & lyrics. Lyrics's empty? Fetch from API
+{===========================}
+{ Song Actions             }
+{===========================}
+
+
 procedure TTracks.HandleSongClick;
 var
   SongID: Integer;
@@ -115,31 +137,29 @@ var
 begin
   if not CanEditDataset then Exit;
 
-  SongID := dmMain.qSongs.FieldByName('ID').AsInteger;
-  SongTitle := dmMain.qSongs.FieldByName('SongTitle').AsString;
-  Artist := dmMain.qSongs.FieldByName('Artist').AsString;
+  SongID := dmMain.qSongs.FieldByName(FIELD_SONG_ID).AsInteger;
+  SongTitle := dmMain.qSongs.FieldByName(FIELD_SONG_TITLE).AsString;
+  Artist := dmMain.qSongs.FieldByName(FIELD_ARTIST).AsString;
 
   Lyrics := '';
-  if Assigned(dmMain.qSongs.FindField('Lyrics')) then
-    Lyrics := Trim(dmMain.qSongs.FieldByName('Lyrics').AsString);
+  if Assigned(dmMain.qSongs.FindField(FIELD_LYRICS)) then
+    Lyrics := Trim(dmMain.qSongs.FieldByName(FIELD_LYRICS).AsString);
 
   if Lyrics <> '' then
     dbMemoLyrics.Text := Lyrics
   else
   begin
-    // synchronous fetch (UI will block while fetching)
     dbMemoLyrics.Text := 'Fetching lyrics...';
-    Application.ProcessMessages; // refresh UI to show fetch msg
+    Application.ProcessMessages;
 
-    Lyrics := TLyricsFetcher.GetLyricsFromAPI(SongID, SongTitle, Artist);  //builds url, sends http req, reads json, extracts lyrics then returns a tring.
+    Lyrics := TLyricsFetcher.GetLyricsFromAPI(SongID, SongTitle, Artist);
 
     if Lyrics <> '' then
     begin
-      // Save lyrics in dataset
       try
         if not (dmMain.qSongs.State in [dsEdit, dsInsert]) then
           dmMain.qSongs.Edit;
-        dmMain.qSongs.FieldByName('Lyrics').AsString := Lyrics;
+        dmMain.qSongs.FieldByName(FIELD_LYRICS).AsString := Lyrics;
         dmMain.qSongs.Post;
       except
         on E: Exception do
@@ -148,13 +168,9 @@ begin
       dbMemoLyrics.Text := Lyrics;
     end
     else
-    begin
-      dbMemoLyrics.Text := 'No lyrics found or an error occurred.';   //fallback msg
-    end;
+      dbMemoLyrics.Text := 'No lyrics found or an error occurred.';
   end;
 end;
 
 end.
-
-
 

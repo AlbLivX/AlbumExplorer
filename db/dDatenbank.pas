@@ -5,7 +5,7 @@ unit dDatenbank;
 interface
 
 uses
-  Classes, SysUtils, Uni, InterBaseUniProvider;
+  Classes, SysUtils, Uni, DB, InterBaseUniProvider;
 
 type
 
@@ -14,6 +14,11 @@ type
   TdmMain = class(TDataModule)
     InterBaseUniProvider1: TInterBaseUniProvider;
     cDatenbank:            TUniConnection;
+    qSongsALBUMCOVER:      TBlobField;
+    qSongsARTIST:          TStringField;
+    qSongsID:              TLongintField;
+    qSongsLYRICS:          TStringField;
+    qSongsSONGTITLE:       TStringField;
     sqAdressen:            TUniDataSource;
     qAdressen:             TUniQuery;
     sqSongs:               TUniDataSource;
@@ -32,6 +37,8 @@ implementation
 {$R *.lfm}
 
 { TdmMain }
+
+
 
 
 end.

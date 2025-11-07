@@ -3,8 +3,8 @@ program Album;
 {$mode objfpc}{$H+}
 
 uses
-  Interfaces,
-  Forms, unidac10, LyricsFetcher, dDatenbank, MainForm, SongsFormUnit, DB;
+  Interfaces, Forms, unidac10, LyricsFetcher, dDatenbank, MainForm,
+  SongsFormUnit, DB, uConstants;
 
 {$R *.res}
 

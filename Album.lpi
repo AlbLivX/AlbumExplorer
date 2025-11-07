@@ -71,6 +71,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="SearchHelper"/>
       </Unit>
+      <Unit>
+        <Filename Value="uconstants.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uConstants"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
