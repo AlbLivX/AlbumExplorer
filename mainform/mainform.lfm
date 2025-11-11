@@ -65,9 +65,11 @@ object Albums: TAlbums
     Font.Name = 'Sans'
     Font.Style = [fsBold]
     ParentFont = False
+    PopupMenu = pmAlbum
     Scrollbars = ssVertical
     TabOrder = 0
     OnCellClick = dbgAlbumsCellClick
+    OnMouseDown = dbgAlbumsMouseDown
   end
   object imgAlbumCover: TImage
     Left = 16
@@ -486,7 +488,19 @@ object Albums: TAlbums
     OnClick = btnClearSearchClick
   end
   object dlgAlbumCover: TOpenDialog
-    Left = 848
+    Left = 840
     Top = 8
+  end
+  object pmAlbum: TPopupMenu
+    Left = 840
+    Top = 72
+    object miViewTracks: TMenuItem
+      Caption = 'View Tracks'
+      OnClick = miViewTracksClick
+    end
+    object miEditAlbum: TMenuItem
+      Caption = 'Edit Album'
+      OnClick = miEditAlbumClick
+    end
   end
 end

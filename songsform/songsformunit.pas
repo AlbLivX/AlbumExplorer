@@ -9,7 +9,7 @@ uses
   StdCtrls, ExtCtrls, Menus, dDatenbank, DB, LyricsFetcher, uConstants;
 
 type
-  { TTracks }
+  { TTracks: Form for managing songs of an album }
 
   TTracks = class(TForm)
     dbgSongs:       TDBGrid;
@@ -24,11 +24,17 @@ type
     procedure dbgSongsCellClick(Column: TColumn);
 
   private
+    { Checks if songs dataset is available and editable }
     function CanEditDataset: Boolean;
+
+    { Displays currently selected song's details including lyrics }
     procedure DisplayCurrentSong;
 
   public
+    { Loads all songs from a given album ID }
     procedure LoadSongsFromAlbum(AlbumID: Integer);
+
+    { Handles song click: fetches lyrics if not available and displays details }
     procedure HandleSongClick;
   end;
 
@@ -43,6 +49,7 @@ implementation
 
 procedure TTracks.miFetchLyricsClick(Sender: TObject);
 begin
+  // Fetch lyrics for selected song
   HandleSongClick;
 end;
 
@@ -63,12 +70,14 @@ var
 begin
   if not CanEditDataset then Exit;
 
+  // Display lyrics if available
   Field := dmMain.qSongs.FindField(FIELD_LYRICS);
   if Assigned(Field) and (Trim(Field.AsString) <> '') then
     dbMemoLyrics.Text := Field.AsString
   else
     dbMemoLyrics.Clear;
 
+  // Load song cover image if available
   imgSongCover.Picture := nil;
   Field := dmMain.qSongs.FindField(FIELD_ALBUM_COVER);
   if Assigned(Field) and (Field.DataType = ftBlob) and not Field.IsNull then
@@ -87,6 +96,7 @@ end;
 
 procedure TTracks.LoadSongsFromAlbum(AlbumID: Integer);
 begin
+  // Loads songs from a given album into the songs dataset
   if not Assigned(dmMain) then Exit;
   if not dmMain.cDatenbank.Connected then
     dmMain.cDatenbank.Connected := True;
@@ -100,6 +110,7 @@ end;
 
 procedure TTracks.dbgSongsCellClick(Column: TColumn);
 begin
+  // Handles song grid click to display lyrics and details
   if CanEditDataset and (Column.FieldName = FIELD_SONG_TITLE) then
     HandleSongClick;
 end;
@@ -111,6 +122,7 @@ var
   SongID: Integer;
   SongTitle, Artist, Lyrics: string;
 begin
+  // Fetch and display lyrics for the selected song
   if not CanEditDataset then Exit;
 
   SongID := dmMain.qSongs.FieldByName(FIELD_SONG_ID).AsInteger;
