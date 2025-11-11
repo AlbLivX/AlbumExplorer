@@ -4,7 +4,7 @@ program Album;
 
 uses
   Interfaces, Forms, unidac10, LyricsFetcher, dDatenbank, MainForm,
-  SongsFormUnit, DB, uConstants;
+  SongsFormUnit, DB, uConstants, LoginFormUnit, RegisterFormUnit;
 
 {$R *.res}
 
@@ -18,6 +18,8 @@ begin
   Application.CreateForm(TAlbums, Albums);
   Application.CreateForm(TTracks, Tracks);
   Application.CreateForm(TdmMain, dmMain);
+  Application.CreateForm(TLogin, LoginForm);
+  Application.CreateForm(TRegister, RegisterForm);
   Application.Run;
 end.
 

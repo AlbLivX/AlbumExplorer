@@ -76,6 +76,20 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="uConstants"/>
       </Unit>
+      <Unit>
+        <Filename Value="auth/loginformunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Login"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="LoginFormUnit"/>
+      </Unit>
+      <Unit>
+        <Filename Value="auth/registerformunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Register"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="RegisterFormUnit"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -85,7 +99,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="/home/LAlbrecht/ComponentsLaz/UniDAC/Source/;../../ComponentsLaz/UniDAC/Source;../../ComponentsLaz/UniDAC/Source/UniProviders/InterBase;../../AlbumExplorer/songsform;helpers;data;main;songsform;mainform"/>
+      <OtherUnitFiles Value="/home/LAlbrecht/ComponentsLaz/UniDAC/Source/;../../ComponentsLaz/UniDAC/Source;../../ComponentsLaz/UniDAC/Source/UniProviders/InterBase;../../AlbumExplorer/songsform;helpers;data;main;songsform;mainform;auth"/>
       <UnitOutputDirectory Value="/home/LAlbrecht/ComponentsLaz/UniDAC/Source"/>
     </SearchPaths>
     <Linking>

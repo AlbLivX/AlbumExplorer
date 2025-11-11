@@ -1,17 +1,17 @@
 object dmMain: TdmMain
   OldCreateOrder = False
-  Height = 746
+  Height = 490
   HorizontalOffset = 0
   VerticalOffset = 0
-  Width = 817
+  Width = 643
   object cDatenbank: TUniConnection
     Connected = True
     ProviderName = 'InterBase'
     Database = '/database/livia.fdb'
     Username = 'sysdba'
     Server = 'hydbdev1'
-    Left = 132
-    Top = 129
+    Left = 80
+    Top = 216
     EncryptedPassword = '8CFF93FF8AFFCFFFCEFF'
   end
   object qAdressen: TUniQuery
@@ -35,8 +35,8 @@ object dmMain: TdmMain
     Top = 128
   end
   object InterBaseUniProvider1: TInterBaseUniProvider
-    Left = 480
-    Top = 128
+    Left = 504
+    Top = 216
   end
   object qSongs: TUniQuery
     Connection = cDatenbank
@@ -111,5 +111,19 @@ object dmMain: TdmMain
     DataSet = qSongs
     Left = 344
     Top = 216
+  end
+  object qUsers: TUniQuery
+    Connection = cDatenbank
+    SQL.Strings = (
+      'SELECT * FROM USERS;'
+    )
+    FilterOptions = []
+    Left = 246
+    Top = 312
+  end
+  object sqUsers: TUniDataSource
+    DataSet = qUsers
+    Left = 344
+    Top = 312
   end
 end
