@@ -23,20 +23,18 @@ type
     dlgAlbumCover:          TOpenDialog;
     navAlbums:              TDBNavigator;
 
-    procedure btnDBConnectClick     (Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnDBConnectClick(Sender: TObject);
     procedure btnLoadAlbumCoverClick(Sender: TObject);
-    procedure btnAlbumSearchClick   (Sender: TObject);
-    procedure btnClearSearchClick   (Sender: TObject);
-    procedure edtAlbumSearchChange  (Sender: TObject);
-    procedure FormCreate            (Sender: TObject);
-    procedure HandleAlbumColumnClick(Column: TColumn);
+    procedure btnAlbumSearchClick(Sender: TObject);
+    procedure btnClearSearchClick(Sender: TObject);
+    procedure edtAlbumSearchChange(Sender: TObject);
+    procedure dbgAlbumsCellClick(Column: TColumn);
 
   private
     procedure DisplayCurrentRecord(DataSet: TDataSet = nil);
-    procedure HandleAlbumByID     (AlbumID: Integer);
-    function  CanEditDataset:     Boolean;
-
-  public
+    procedure HandleAlbumByID(AlbumID: Integer);
+    function  CanEditDataset: Boolean;
   end;
 
 var
@@ -49,32 +47,14 @@ implementation
 uses
   Variants;
 
-{===========================}
-{ Form Initialization       }
-{===========================}
+{ Form Initialization }
 
 procedure TAlbums.FormCreate(Sender: TObject);
 begin
-  // Configure clear search button
-  if Assigned(btnClearSearch) then
-  begin
-    btnClearSearch.Visible     := False;
-    btnClearSearch.Flat        := True;
-    btnClearSearch.ShowCaption := False;
-    btnClearSearch.Enabled     := True;
-    btnClearSearch.Transparent := True;
-    btnClearSearch.Hint        := 'Clear search';
-    btnClearSearch.ShowHint    := True;
-    btnClearSearch.BringToFront;
-  end;
-
-  // Assign grid column click handler
-  dbgAlbums.OnCellClick := @HandleAlbumColumnClick;
+  // optional: custom runtime initialization
 end;
 
-{===========================}
-{ Dataset Utilities         }
-{===========================}
+{ Dataset Utilities }
 
 function TAlbums.CanEditDataset: Boolean;
 begin
@@ -91,9 +71,10 @@ var
 begin
   if not CanEditDataset then Exit;
 
-  dbMemoAlbumDescription.Text := dmMain.qAdressen.FieldByName(FIELD_DESCRIPTION).AsString;
-  imgAlbumCover.Picture := nil;
+  dbMemoAlbumDescription.Text :=
+    dmMain.qAdressen.FieldByName(FIELD_DESCRIPTION).AsString;
 
+  imgAlbumCover.Picture := nil;
   Field := dmMain.qAdressen.FieldByName(FIELD_ALBUM_COVER);
   if Assigned(Field) and not Field.IsNull then
   begin
@@ -106,9 +87,7 @@ begin
   end;
 end;
 
-{===========================}
-{ Database Actions          }
-{===========================}
+{ Database Actions }
 
 procedure TAlbums.btnDBConnectClick(Sender: TObject);
 begin
@@ -147,8 +126,9 @@ begin
   end;
 
   dmMain.qAdressen.Filtered := False;
-  dmMain.qAdressen.Filter := Format('(ALBUM LIKE ''%%%s%%'') OR (ARTIST LIKE ''%%%s%%'')',
-                                    [FilterText, FilterText]);
+  dmMain.qAdressen.Filter :=
+    Format('(ALBUM LIKE ''%%%s%%'') OR (ARTIST LIKE ''%%%s%%'')',
+           [FilterText, FilterText]);
   dmMain.qAdressen.Filtered := True;
 
   if not dmMain.qAdressen.IsEmpty then
@@ -166,19 +146,14 @@ end;
 
 procedure TAlbums.edtAlbumSearchChange(Sender: TObject);
 begin
-  if Assigned(btnClearSearch) and Assigned(edtAlbumSearch) then
-  begin
+  if Assigned(btnClearSearch) then
     btnClearSearch.Visible := edtAlbumSearch.Text <> '';
-    btnClearSearch.BringToFront;
-  end;
   btnAlbumSearchClick(Sender);
 end;
 
-{===========================}
-{ Grid Handlers             }
-{===========================}
+{ Grid Handlers }
 
-procedure TAlbums.HandleAlbumColumnClick(Column: TColumn);
+procedure TAlbums.dbgAlbumsCellClick(Column: TColumn);
 begin
   if (Column.FieldName = FIELD_ALBUM) and CanEditDataset then
     HandleAlbumByID(dmMain.qAdressen.FieldByName(FIELD_ID).AsInteger);
@@ -201,9 +176,7 @@ begin
   end;
 end;
 
-{===========================}
-{ UI Actions                }
-{===========================}
+{ UI Actions }
 
 procedure TAlbums.btnLoadAlbumCoverClick(Sender: TObject);
 var

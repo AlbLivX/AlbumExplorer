@@ -9,6 +9,8 @@ uses
   StdCtrls, ExtCtrls, Menus, dDatenbank, DB, LyricsFetcher, uConstants;
 
 type
+  { TTracks }
+
   TTracks = class(TForm)
     dbgSongs:       TDBGrid;
     imgSongCover:   TDBImage;
@@ -19,11 +21,11 @@ type
     pmSongs:        TPopupMenu;
 
     procedure miFetchLyricsClick(Sender: TObject);
+    procedure dbgSongsCellClick(Column: TColumn);
 
   private
     function CanEditDataset: Boolean;
     procedure DisplayCurrentSong;
-    procedure colClick(Column: TColumn);
 
   public
     procedure LoadSongsFromAlbum(AlbumID: Integer);
@@ -37,19 +39,14 @@ implementation
 
 {$R *.lfm}
 
-{===========================}
-{ Menu Actions              }
-{===========================}
+{ Menu Action }
 
 procedure TTracks.miFetchLyricsClick(Sender: TObject);
 begin
   HandleSongClick;
 end;
 
-{===========================}
-{ Dataset Utilities         }
-{===========================}
-
+{ Utility }
 
 function TTracks.CanEditDataset: Boolean;
 begin
@@ -58,7 +55,6 @@ begin
         and dmMain.qSongs.Active
         and not dmMain.qSongs.IsEmpty;
 end;
-
 
 procedure TTracks.DisplayCurrentSong;
 var
@@ -80,28 +76,14 @@ begin
     BlobStream := dmMain.qSongs.CreateBlobStream(Field, bmRead);
     try
       if BlobStream.Size > 0 then
-      begin
-        try
-          imgSongCover.Picture.LoadFromStream(BlobStream);
-        except
-          on E: Exception do
-          begin
-            writeln('Could not load song cover for song ID ',
-                    dmMain.qSongs.FieldByName(FIELD_SONG_ID).AsInteger, ': ', E.Message);
-            imgSongCover.Picture := nil;
-          end;
-        end;
-      end;
+        imgSongCover.Picture.LoadFromStream(BlobStream);
     finally
       BlobStream.Free;
     end;
   end;
 end;
 
-{===========================}
-{ Database Actions          }
-{===========================}
-
+{ DB Actions }
 
 procedure TTracks.LoadSongsFromAlbum(AlbumID: Integer);
 begin
@@ -114,21 +96,15 @@ begin
   dmMain.qSongs.Open;
 end;
 
-{===========================}
-{ Grid Handlers             }
-{===========================}
+{ Grid Click }
 
-
-procedure TTracks.colClick(Column: TColumn);
+procedure TTracks.dbgSongsCellClick(Column: TColumn);
 begin
   if CanEditDataset and (Column.FieldName = FIELD_SONG_TITLE) then
     HandleSongClick;
 end;
 
-{===========================}
-{ Song Actions             }
-{===========================}
-
+{ Main Logic }
 
 procedure TTracks.HandleSongClick;
 var

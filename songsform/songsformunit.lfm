@@ -79,6 +79,7 @@ object Tracks: TTracks
     ParentFont = False
     PopupMenu = pmSongs
     TabOrder = 1
+    OnCellClick = dbgSongsCellClick
   end
   object imgSongCover: TDBImage
     Left = 34

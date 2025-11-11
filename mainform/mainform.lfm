@@ -67,7 +67,7 @@ object Albums: TAlbums
     ParentFont = False
     Scrollbars = ssVertical
     TabOrder = 0
-    OnCellClick = HandleAlbumColumnClick
+    OnCellClick = dbgAlbumsCellClick
   end
   object imgAlbumCover: TImage
     Left = 16
@@ -111,6 +111,7 @@ object Albums: TAlbums
     BorderStyle = bsNone
     Color = 1054487
     DataField = 'DESCRIPTION'
+    DataSource = dmMain.sqAdressen
     Font.Color = clWhite
     Font.Height = -13
     Font.Name = 'Sans'
@@ -477,8 +478,9 @@ object Albums: TAlbums
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000
     }
-    Transparent = False
     Visible = False
+    ShowCaption = False
+    ShowHint = True
     ParentFont = False
     ParentShowHint = False
     OnClick = btnClearSearchClick
