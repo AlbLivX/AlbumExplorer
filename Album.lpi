@@ -80,6 +80,7 @@
         <Filename Value="auth/loginformunit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Login"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LoginFormUnit"/>
       </Unit>
@@ -87,6 +88,7 @@
         <Filename Value="auth/registerformunit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Register"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="RegisterFormUnit"/>
       </Unit>

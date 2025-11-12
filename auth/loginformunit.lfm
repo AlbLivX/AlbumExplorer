@@ -13,7 +13,7 @@ object Login: TLogin
     Width = 290
     Align = alTop
     Alignment = taCenter
-    Caption = 'Login Form'
+    Caption = 'Albums Wiki Login'
     Font.Height = -15
     Font.Name = 'Sans'
     ParentFont = False
@@ -45,6 +45,7 @@ object Login: TLogin
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 2
+    OnClick = btnLoginClick
   end
   object btnRegister: TButton
     Left = 16
@@ -59,11 +60,10 @@ object Login: TLogin
   end
   object lblLoginStatusMsg: TLabel
     Left = 16
-    Height = 18
+    Height = 1
     Hint = 'Login Status:'
     Top = 320
-    Width = 117
-    Caption = 'Status Place Holder.'
+    Width = 1
     Font.Height = -13
     Font.Name = 'Sans'
     ParentFont = False

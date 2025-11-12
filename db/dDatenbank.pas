@@ -23,8 +23,8 @@ type
     qAdressen:             TUniQuery;
     sqSongs:               TUniDataSource;
     qSongs:                TUniQuery;
-    sqUsers: TUniDataSource;
-    qUsers: TUniQuery;
+    sqUsers:               TUniDataSource;
+    qUsers:                TUniQuery;
   private
 
   public
