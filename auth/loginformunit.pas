@@ -5,7 +5,8 @@ unit LoginFormUnit;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, dDatenBank;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, DBCtrls,
+  dDatenbank, DB;
 
 type
 
@@ -15,16 +16,18 @@ type
     btnLogin: TButton;
     btnRegister: TButton;
     cbkStayLoggedIn: TCheckBox;
-    edtUsername: TEdit;
-    edtUserPassword: TEdit;
+    edtUsername: TDBEdit;
+    edtUserPassword: TDBEdit;
     lblLoginFormTitle: TLabel;
     lblLoginStatusMsg: TLabel;
     procedure btnLoginClick(Sender: TObject);
 
+
   private
-    FLoginSuccessful: Boolean;
+      FLoginSuccessful: Boolean;
   public
-    property LoginSuccessful: Boolean read FLoginSuccessful;
+     function Execute : boolean;
+     property LoginSuccessful: Boolean read FLoginSuccessful;
   end;
 
 var
@@ -36,6 +39,14 @@ implementation
 
 { TLogin }
 
+
+function TLogin.Execute: Boolean;
+begin
+  dmMain.cDatenbank.Connected := True;
+  FLoginSuccessful := False;
+  ShowModal;
+  Result := FLoginSuccessful;
+end;
 
 procedure TLogin.btnLoginClick(Sender: TObject);
 var
@@ -54,30 +65,24 @@ begin
   begin
     if password = '1234' then
     begin
-      lblLoginStatusMsg.Caption := 'Logging in...';
       FLoginSuccessful := True;
-
+      lblLoginStatusMsg.Caption := 'Logging in...';
       if cbkStayLoggedIn.Checked then
-      begin
         lblLoginStatusMsg.Caption := lblLoginStatusMsg.Caption + ' (Will stay logged in)';
-      end;
+
+      Close; // closes form, Execute returns True
     end
     else
     begin
       FLoginSuccessful := False;
       lblLoginStatusMsg.Caption := 'Wrong password.';
-      Exit;
     end;
   end
   else
   begin
     FLoginSuccessful := False;
     lblLoginStatusMsg.Caption := 'Account does not exist.';
-    Exit;
   end;
-  Close;
 end;
-
-
 end.
 

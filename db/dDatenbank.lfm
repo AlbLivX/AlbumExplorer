@@ -115,22 +115,11 @@ object dmMain: TdmMain
   object qUsers: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT * FROM USERS WHERE USERNAME = :uname AND PASSWORDHASH = :pwd'
+      'SELECT * FROM USERS'
     )
     FilterOptions = []
     Left = 246
     Top = 312
-    ParamData = <    
-      item
-        DataType = ftString
-        Name = 'uname'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftString
-        Name = 'pwd'
-        ParamType = ptInput
-      end>
   end
   object sqUsers: TUniDataSource
     DataSet = qUsers

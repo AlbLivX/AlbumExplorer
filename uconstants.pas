@@ -17,6 +17,11 @@ const
   FIELD_LYRICS      = 'Lyrics';
   FIELD_SONG_COVER  = 'SongCover';
 
+  FIELD_USER_ID     = 'ID';
+  FIELD_USERNAME    = 'Username';
+  FIELD_EMAIL       = 'Email';
+  FIELD_PWD_HASH    = 'Password';
+
   { parameter names (for queries) }
   PARAM_ALBUM_ID    = 'AlbumID';
 

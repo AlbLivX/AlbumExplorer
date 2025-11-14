@@ -18,13 +18,9 @@ begin
   Application.CreateForm(TTracks, Tracks);
 
 
-  LoginForm.ShowModal;
-
-
-  if LoginForm.LoginSuccessful then
-  begin
-    Application.Run;
-  end
+   if LoginForm.Execute then
+    Application.Run
   else
     Application.Terminate;
+
 end.
