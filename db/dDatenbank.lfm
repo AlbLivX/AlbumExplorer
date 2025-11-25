@@ -1,6 +1,6 @@
 object dmMain: TdmMain
   OldCreateOrder = False
-  Height = 490
+  Height = 779
   HorizontalOffset = 0
   VerticalOffset = 0
   Width = 643
@@ -10,8 +10,8 @@ object dmMain: TdmMain
     Database = '/database/livia.fdb'
     Username = 'sysdba'
     Server = 'hydbdev1'
-    Left = 80
-    Top = 216
+    Left = 464
+    Top = 176
     EncryptedPassword = '8CFF93FF8AFFCFFFCEFF'
   end
   object qAdressen: TUniQuery
@@ -26,13 +26,13 @@ object dmMain: TdmMain
       'FROM Album;'
     )
     FilterOptions = []
-    Left = 246
-    Top = 129
+    Left = 104
+    Top = 88
   end
   object sqAdressen: TUniDataSource
     DataSet = qAdressen
-    Left = 352
-    Top = 128
+    Left = 207
+    Top = 88
   end
   object qSongs: TUniQuery
     Connection = cDatenbank
@@ -51,8 +51,8 @@ object dmMain: TdmMain
       'WHERE s.ALBUMID = :ALBUMID'
     )
     FilterOptions = []
-    Left = 246
-    Top = 216
+    Left = 104
+    Top = 184
     ParamData = <    
       item
         DataType = ftUnknown
@@ -109,18 +109,18 @@ object dmMain: TdmMain
   end
   object sqSongs: TUniDataSource
     DataSet = qSongs
-    Left = 344
-    Top = 216
+    Left = 207
+    Top = 184
   end
   object qUsersLogin: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT PWDHASH FROM USERS WHERE USERNAME = :username'
+      'SELECT PWDHASH FROM USERS WHERE USERNAME = :USERNAME'
       ''
     )
     FilterOptions = []
-    Left = 246
-    Top = 312
+    Left = 104
+    Top = 272
     ParamData = <    
       item
         DataType = ftString
@@ -130,28 +130,48 @@ object dmMain: TdmMain
   end
   object sqUsers: TUniDataSource
     DataSet = qUsersLogin
-    Left = 336
-    Top = 360
+    Left = 208
+    Top = 273
   end
   object InterBaseUniProvider1: TInterBaseUniProvider
-    Left = 488
-    Top = 216
+    Left = 464
+    Top = 280
   end
   object qUsersRegister: TUniQuery
-    SQLInsert.Strings = (
-      'INSERT INTO USERS (USERNAME, EMAIL, PWDHASH) VALUES (:USERNAME, :EMAIL, :PWDHASH)'
-    )
-    SQLDelete.Strings = (
-      'DELETE FROM USERS WHERE USERNAME=:USERNAME'
-    )
-    SQLUpdate.Strings = (
-      'UPDATE USERS SET EMAIL=:EMAIL, PWDHASH=:PWDHASH WHERE USERNAME=:USERNAME'
-    )
+    Connection = cDatenbank
     SQL.Strings = (
-      'SELECT * FROM USERS'
+      'INSERT INTO USERS (USERNAME, EMAIL, PWDHASH) VALUES (:USERNAME, :EMAIL, :PWDHASH'
+      ')'
     )
     FilterOptions = []
-    Left = 249
-    Top = 392
+    Left = 104
+    Top = 352
+    ParamData = <    
+      item
+        DataType = ftString
+        Name = 'USERNAME'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'EMAIL'
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'PWDHASH'
+      end>
+  end
+  object sqUsersRegister: TUniDataSource
+    Left = 207
+    Top = 353
+  end
+  object qNextUserID: TUniQuery
+    Connection = cDatenbank
+    SQL.Strings = (
+      'SELECT GEN_ID(GEN_USERS_ID, 1) AS NEWID FROM RDB$DATABASE'
+    )
+    FilterOptions = []
+    Left = 99
+    Top = 447
   end
 end

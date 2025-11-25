@@ -24,6 +24,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+      <Item>
         <PackageName Value="ibprovider10"/>
       </Item>
       <Item>
@@ -95,6 +98,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
       </Unit>
+      <Unit>
+        <Filename Value="auth/objects/userobjectunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UserObjectUnit"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -104,7 +112,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="auth;db;helpers;mainform;songsform;res"/>
+      <OtherUnitFiles Value="auth;db;helpers;mainform;songsform;res;auth/objects"/>
       <UnitOutputDirectory Value="/home/LAlbrecht/ComponentsLaz/UniDAC/Source"/>
     </SearchPaths>
     <Linking>

@@ -24,8 +24,11 @@ type
     sqSongs:               TUniDataSource;
     qSongs:                TUniQuery;
     sqUsers:               TUniDataSource;
-    qUsersLogin:                TUniQuery;
-    qUsersRegister: TUniQuery;
+    qUsersLogin:           TUniQuery;
+    qUsersRegister:        TUniQuery;
+    sqUsersRegister:       TUniDataSource;
+    qNextUserID: TUniQuery;
+
 
 
   private
@@ -42,9 +45,6 @@ implementation
 {$R *.lfm}
 
 { TdmMain }
-
-
-
 
 
 

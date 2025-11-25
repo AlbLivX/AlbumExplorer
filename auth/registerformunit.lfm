@@ -63,6 +63,7 @@ object RegisterForm: TRegisterForm
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 3
+    OnClick = btnRegisterClick
   end
   object Cancel: TButton
     Left = 16

@@ -4,7 +4,8 @@ program Album;
 
 uses
   Forms, Interfaces, LCLType, LyricsFetcher, MainForm, SongsFormUnit, DB,
-  uConstants, dDatenbank, LoginFormUnit, RegisterFormUnit, Uni, ibprovider10;
+  uConstants, dDatenbank, LoginFormUnit, RegisterFormUnit, Uni, ibprovider10,
+  UserObjectUnit;
 
 {$R *.res}
 
