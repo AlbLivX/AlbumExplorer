@@ -248,7 +248,6 @@ begin
   ShowMessage('Image saved successfully!');
 end;
 //TODO: DB connection should happen after succesful login and not with clicking connect button
-//DONE: right click to choose from a menue: Viewtracks &/ Edit Album
 
 end.
 

@@ -11,9 +11,10 @@ uses
 begin
   Application.Scaled:=True;
   Application.Initialize;
-Application.CreateForm(TdmMain, dmMain);
-Application.CreateForm(TAlbums, Albums);
-Application.CreateForm(TLoginForm, LoginForm);
+  Application.CreateForm(TdmMain, dmMain);
+  Application.CreateForm(TAlbums, Albums);
+  Application.CreateForm(TLoginForm, LoginForm);
+  Application.CreateForm(TRegisterForm, RegisterForm);
 
 
   if LoginForm.Execute then

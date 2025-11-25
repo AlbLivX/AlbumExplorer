@@ -112,10 +112,10 @@ object dmMain: TdmMain
     Left = 344
     Top = 216
   end
-  object qUsers: TUniQuery
+  object qUsersLogin: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT PWDHASH FROM Users WHERE USERNAME = :username'
+      'SELECT PWDHASH FROM USERS WHERE USERNAME = :username'
       ''
     )
     FilterOptions = []
@@ -129,12 +129,29 @@ object dmMain: TdmMain
       end>
   end
   object sqUsers: TUniDataSource
-    DataSet = qUsers
-    Left = 344
-    Top = 312
+    DataSet = qUsersLogin
+    Left = 336
+    Top = 360
   end
   object InterBaseUniProvider1: TInterBaseUniProvider
-    Left = 459
-    Top = 135
+    Left = 488
+    Top = 216
+  end
+  object qUsersRegister: TUniQuery
+    SQLInsert.Strings = (
+      'INSERT INTO USERS (USERNAME, EMAIL, PWDHASH) VALUES (:USERNAME, :EMAIL, :PWDHASH)'
+    )
+    SQLDelete.Strings = (
+      'DELETE FROM USERS WHERE USERNAME=:USERNAME'
+    )
+    SQLUpdate.Strings = (
+      'UPDATE USERS SET EMAIL=:EMAIL, PWDHASH=:PWDHASH WHERE USERNAME=:USERNAME'
+    )
+    SQL.Strings = (
+      'SELECT * FROM USERS'
+    )
+    FilterOptions = []
+    Left = 249
+    Top = 392
   end
 end

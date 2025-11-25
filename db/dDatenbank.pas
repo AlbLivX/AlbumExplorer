@@ -24,7 +24,8 @@ type
     sqSongs:               TUniDataSource;
     qSongs:                TUniQuery;
     sqUsers:               TUniDataSource;
-    qUsers:                TUniQuery;
+    qUsersLogin:                TUniQuery;
+    qUsersRegister: TUniQuery;
 
 
   private

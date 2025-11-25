@@ -83,7 +83,7 @@
       <Unit>
         <Filename Value="auth/registerformunit.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Register"/>
+        <ComponentName Value="RegisterForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="RegisterFormUnit"/>

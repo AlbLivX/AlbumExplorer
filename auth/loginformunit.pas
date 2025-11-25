@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, DBCtrls, IniFiles,
-  dDatenbank, DB, UniProvider;
+  dDatenbank, DB, UniProvider, RegisterFormUnit;
 
 const
   C_INI_FILE = 'user.ini';
@@ -24,8 +24,7 @@ type
     edtUserPassword:   TEdit;
     lblLoginFormTitle: TLabel;
     lblLoginStatusMsg: TLabel;
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
-    procedure FormCreate   (Sender: TObject);
+    procedure btnRegisterClick(Sender: TObject);
     procedure ConnectDB;
     procedure btnLoginClick(Sender: TObject);
 
@@ -60,8 +59,8 @@ begin
   try
     if not dmMain.cDatenbank.Connected then
            dmMain.cDatenBank.Connected := True;
-    if not dmMain.qUsers.Active then
-           dmMain.qUsers.Open;
+    if not dmMain.qUsersLogin.Active then
+           dmMain.qUsersLogin.Open;
     WriteLn('Database connected successfully!');
 
            LoadStayLoggedIn;
@@ -70,6 +69,40 @@ begin
     ShowMessage('Database Error: ' + E.Message);
   end;
 end;
+
+procedure TLoginForm.btnRegisterClick(Sender: TObject);
+var
+  RegForm: TRegisterForm;
+  NewUser: string;
+begin
+  // User is not logging in right now
+  FLoginSuccessful := False;
+
+  // Create the registration form dynamically
+  RegForm := TRegisterForm.Create(Self);
+  try
+    // Show it modally and wait for result
+    if RegForm.ShowModal = mrOK then
+    begin
+      // Registration succeeded
+      NewUser := RegForm.edtUsername.Text;
+
+      // Prefill username on login form
+      edtUsername.Text := NewUser;
+
+      ShowMessage('Registration successful. You can now log in.');
+    end
+    else
+    begin
+      // Registration cancelled
+      ShowMessage('Registration cancelled.');
+    end;
+
+  finally
+    RegForm.Free;
+  end;
+end;
+
 
 {Loads users saved data from iniFile if stay logged in is checked. before window appears}
 function TLoginForm.LoadStayLoggedIn: string;
@@ -116,29 +149,8 @@ begin
 end;
 
 
-{Creats the form and initilizes users saved data to load before window appears}
-procedure TLoginForm.FormCreate(Sender: TObject);
-var
-  savedUser: string;
-begin
-  ConnectDB;
-  savedUser := LoadStayLoggedIn;
 
-  if savedUser <> '' then
-  begin
-    WriteLn('Found saved user: ' + savedUser);
-    edtUsername.Text := savedUser;
 
-    //btnLoginClick(nil);
-  end
-  else
-    WriteLn('No saved user found.');
-end;
-
-procedure TLoginForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-begin
-    //LoginForm := nil;
-end;
 
 {LoginForm Button Click}
 procedure TLoginForm.btnLoginClick(Sender: TObject);
@@ -188,18 +200,18 @@ begin
 
   // Query the database to get the stored password hash for the username
   try
-    dmMain.qUsers.ParamByName('username').AsString := username;
-    dmMain.qUsers.Open; // Open the query to execute it
+    dmMain.qUsersLogin.ParamByName('username').AsString := username;
+    dmMain.qUsersLogin.Open; // Open the query to execute it
 
     // Check if user exists
-    if dmMain.qUsers.IsEmpty then
+    if dmMain.qUsersLogin.IsEmpty then
     begin
       ShowMessage('User not found');
       Exit;
     end;
 
     // Get the password hash from the query result
-    storedPasswordHash := dmMain.qUsers.FieldByName('PWDHASH').AsString;
+    storedPasswordHash := dmMain.qUsersLogin.FieldByName('PWDHASH').AsString;
 
     if storedPasswordHash = password then
       Result := True
@@ -221,4 +233,3 @@ begin
 end;
 
 end.
-
