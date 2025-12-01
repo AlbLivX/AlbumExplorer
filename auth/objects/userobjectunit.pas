@@ -25,6 +25,8 @@ type
     FQueryLogin: TUniQuery;
 
     procedure SetPassword(const APassword: string);
+    function FieldExists(const AField, AValue: string): Boolean; // Refactored duplicate logic
+    procedure HandleDatabaseError(const E: Exception); // Centralized error handling
   public
     constructor Create(AQueryRegister, AQueryLogin: TUniQuery);
 
@@ -36,6 +38,7 @@ type
 
     function ValidateCredentials(const AUsername, APassword: string): Boolean;
     function UsernameExists(const AUsername: string): Boolean;
+    function EmailExists(const AEmail: string): Boolean;
     function RegisterUser: Boolean;
 
     procedure LoadSettings;
@@ -91,15 +94,21 @@ begin
   end;
 end;
 
-{ Check if username exists in DB }
-function TUserObject.UsernameExists(const AUsername: string): Boolean;
+{ Centralized error handling for DB-related operations }
+procedure TUserObject.HandleDatabaseError(const E: Exception);
+begin
+  FLastError := 'DB error: ' + E.Message;
+end;
+
+{ Generalized method to check if a field (Username or Email) exists in DB }
+function TUserObject.FieldExists(const AField, AValue: string): Boolean;
 begin
   Result := False;
   FLastError := '';
   try
     FQueryRegister.Close;
-    FQueryRegister.SQL.Text := 'SELECT ID FROM USERS WHERE USERNAME = :USERNAME';
-    FQueryRegister.ParamByName('USERNAME').AsString := AUsername;
+    //FQueryRegister.SQL.Text := Format('SELECT ID FROM USERS WHERE TRIM(%s) = TRIM(:Value)', [AField]);
+    FQueryRegister.ParamByName('Value').AsString := AValue;
     FQueryRegister.Open;
 
     Result := not FQueryRegister.IsEmpty;
@@ -107,10 +116,22 @@ begin
   except
     on E: Exception do
     begin
-      FLastError := 'DB error: ' + E.Message;
-      Result := True; // assume exists to prevent duplicate insert
+      HandleDatabaseError(E); // Call centralized error handling
+      Result := True; // assume exists for safety
     end;
   end;
+end;
+
+{ Check if username exists in DB }
+function TUserObject.UsernameExists(const AUsername: string): Boolean;
+begin
+  Result := FieldExists('USERNAME', AUsername); // Reusing generalized method
+end;
+
+{ Check if email exists in DB }
+function TUserObject.EmailExists(const AEmail: string): Boolean;
+begin
+  Result := FieldExists('EMAIL', AEmail); // Reusing generalized method
 end;
 
 { Register user in DB using ExecSQL }
@@ -129,8 +150,6 @@ begin
 
     // Insert new user via ExecSQL
     FQueryRegister.Close;
-    FQueryRegister.SQL.Text := 'INSERT INTO USERS (ID, USERNAME, EMAIL, PWDHASH) ' +
-                               'VALUES (:ID, :USERNAME, :EMAIL, :PWDHASH)';
     FQueryRegister.ParamByName('ID').AsInteger := NewID;
     FQueryRegister.ParamByName('USERNAME').AsString := Trim(FUsername);
     FQueryRegister.ParamByName('EMAIL').AsString := Trim(FEmail);
@@ -143,7 +162,7 @@ begin
     Result := True;
   except
     on E: Exception do
-      FLastError := 'DB error: ' + E.Message;
+      HandleDatabaseError(E); // Call centralized error handling
   end;
 end;
 
@@ -157,7 +176,6 @@ begin
 
   try
     FQueryLogin.Close;
-    FQueryLogin.SQL.Text := 'SELECT PWDHASH FROM USERS WHERE USERNAME = :USERNAME';
     FQueryLogin.ParamByName('USERNAME').AsString := AUsername;
     FQueryLogin.Open;
 
@@ -176,7 +194,7 @@ begin
 
   except
     on E: Exception do
-      FLastError := 'Error validating user: ' + E.Message;
+      HandleDatabaseError(E); // Call centralized error handling
   end;
 end;
 

@@ -7,6 +7,7 @@ object LoginForm: TLoginForm
   Caption = 'Login Form'
   ClientHeight = 355
   ClientWidth = 290
+  LCLVersion = '4.2.0.0'
   object lblLoginFormTitle: TLabel
     Left = 96
     Height = 23
@@ -43,7 +44,6 @@ object LoginForm: TLoginForm
     Font.Name = 'Sans'
     ParentFont = False
     TabOrder = 1
-    OnClick = btnRegisterClick
   end
   object lblLoginStatusMsg: TLabel
     Left = 16

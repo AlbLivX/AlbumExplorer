@@ -115,8 +115,9 @@ object dmMain: TdmMain
   object qUsersLogin: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT PWDHASH FROM USERS WHERE USERNAME = :USERNAME'
-      ''
+      'SELECT PWDHASH'
+      'FROM USERS'
+      'WHERE TRIM(USERNAME) = TRIM(:USERNAME)'
     )
     FilterOptions = []
     Left = 104
@@ -140,25 +141,15 @@ object dmMain: TdmMain
   object qUsersRegister: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'INSERT INTO USERS (USERNAME, EMAIL, PWDHASH) VALUES (:USERNAME, :EMAIL, :PWDHASH'
-      ')'
+      'SELECT ID FROM USERS WHERE TRIM(%s) = TRIM(:Value)'
     )
     FilterOptions = []
     Left = 104
     Top = 352
     ParamData = <    
       item
-        DataType = ftString
-        Name = 'USERNAME'
-        ParamType = ptInput
-      end    
-      item
         DataType = ftUnknown
-        Name = 'EMAIL'
-      end    
-      item
-        DataType = ftUnknown
-        Name = 'PWDHASH'
+        Name = 'Value'
       end>
   end
   object sqUsersRegister: TUniDataSource

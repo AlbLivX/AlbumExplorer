@@ -6,6 +6,7 @@ object RegisterForm: TRegisterForm
   Caption = 'Register Form'
   ClientHeight = 443
   ClientWidth = 286
+  LCLVersion = '4.2.0.0'
   object lblRegistorFormTitle: TLabel
     Left = 96
     Height = 23

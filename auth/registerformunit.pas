@@ -80,14 +80,22 @@ begin
   FUserObj.Email := Trim(edtEmail.Text);
   FUserObj.Password := Trim(edtPassword.Text);
 
-  // Check if username already exists
+   //Check if username already exists
   if FUserObj.UsernameExists(FUserObj.Username) then
   begin
     lblRegisterStatus.Caption := 'Username already exists.';
     Exit;
   end;
 
-  // Attempt registration
+
+   //Check if email already exists
+  if FUserObj.EmailExists(FUserObj.Email) then
+  begin
+    lblRegisterStatus.Caption := 'Email already exists.';
+    Exit;
+  end;
+
+  //Attempt registration
   if FUserObj.RegisterUser then
   begin
     lblRegisterStatus.Caption := 'Registration successful.';
@@ -136,4 +144,3 @@ begin
 end;
 
 end.
-

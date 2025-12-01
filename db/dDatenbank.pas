@@ -14,10 +14,12 @@ type
   TdmMain = class(TDataModule)
     cDatenbank:            TUniConnection;
     InterBaseUniProvider1: TInterBaseUniProvider;
+    qNextUserID: TUniQuery;
     qSongsALBUMCOVER:      TBlobField;
     qSongsARTIST:          TStringField;
     qSongsID:              TLongintField;
-    qSongsLYRICS:          TStringField;
+    qSongsLYRICS: TStringField;
+    //qSongsLYRICS:          TStringField;
     qSongsSONGTITLE:       TStringField;
     sqAdressen:            TUniDataSource;
     qAdressen:             TUniQuery;
@@ -27,7 +29,6 @@ type
     qUsersLogin:           TUniQuery;
     qUsersRegister:        TUniQuery;
     sqUsersRegister:       TUniDataSource;
-    qNextUserID: TUniQuery;
 
 
 
