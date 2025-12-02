@@ -5,30 +5,31 @@ unit dDatenbank;
 interface
 
 uses
-  Classes, SysUtils, Uni, InterBaseUniProvider, DB;
+  Classes, SysUtils, Uni, DB, InterBaseUniProvider;
 
 type
 
   { TdmMain }
 
   TdmMain = class(TDataModule)
+    {Connection}
     cDatenbank:            TUniConnection;
+
+    {Provider}
     InterBaseUniProvider1: TInterBaseUniProvider;
-    qNextUserID: TUniQuery;
-    qSongsALBUMCOVER:      TBlobField;
-    qSongsARTIST:          TStringField;
-    qSongsID:              TLongintField;
-    qSongsLYRICS: TStringField;
-    //qSongsLYRICS:          TStringField;
-    qSongsSONGTITLE:       TStringField;
-    sqAdressen:            TUniDataSource;
+
+    {Album & Track Queries and DataSource}
     qAdressen:             TUniQuery;
-    sqSongs:               TUniDataSource;
     qSongs:                TUniQuery;
-    sqUsers:               TUniDataSource;
+    sqAdressen:            TUniDataSource;
+    sqSongs:               TUniDataSource;
+
+    {User Quiries}
     qUsersLogin:           TUniQuery;
     qUsersRegister:        TUniQuery;
-    sqUsersRegister:       TUniDataSource;
+    qUsersInsert: TUniQuery;
+    qUserCheckExists: TUniQuery;
+
 
 
 

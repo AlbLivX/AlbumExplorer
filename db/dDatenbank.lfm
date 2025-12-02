@@ -10,8 +10,8 @@ object dmMain: TdmMain
     Database = '/database/livia.fdb'
     Username = 'sysdba'
     Server = 'hydbdev1'
-    Left = 464
-    Top = 176
+    Left = 528
+    Top = 88
     EncryptedPassword = '8CFF93FF8AFFCFFFCEFF'
   end
   object qAdressen: TUniQuery
@@ -58,54 +58,6 @@ object dmMain: TdmMain
         DataType = ftUnknown
         Name = 'ALBUMID'
       end>
-    object qSongsID: TLongintField
-      FieldKind = fkData
-      FieldName = 'ID'
-      Index = 0
-      LookupCache = False
-      ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = False
-      Required = True
-    end
-    object qSongsSONGTITLE: TStringField
-      FieldKind = fkData
-      FieldName = 'SONGTITLE'
-      Index = 1
-      LookupCache = False
-      ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = False
-      Required = True
-      Size = 1020
-    end
-    object qSongsARTIST: TStringField
-      FieldKind = fkData
-      FieldName = 'ARTIST'
-      Index = 2
-      LookupCache = False
-      ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = True
-      Required = False
-      Size = 400
-    end
-    object qSongsLYRICS: TStringField
-      FieldKind = fkData
-      FieldName = 'LYRICS'
-      Index = 3
-      LookupCache = False
-      ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = False
-      Required = False
-      Size = 16000
-    end
-    object qSongsALBUMCOVER: TBlobField
-      FieldKind = fkData
-      FieldName = 'ALBUMCOVER'
-      Index = 4
-      LookupCache = False
-      ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = True
-      Required = False
-    end
   end
   object sqSongs: TUniDataSource
     DataSet = qSongs
@@ -115,54 +67,90 @@ object dmMain: TdmMain
   object qUsersLogin: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT PWDHASH'
-      'FROM USERS'
+      'SELECT PWDHASH FROM USERS'
       'WHERE TRIM(USERNAME) = TRIM(:USERNAME)'
+      ''
     )
     FilterOptions = []
     Left = 104
-    Top = 272
+    Top = 288
     ParamData = <    
       item
         DataType = ftString
-        Name = 'username'
+        Name = 'USERNAME'
         ParamType = ptInput
       end>
   end
-  object sqUsers: TUniDataSource
-    DataSet = qUsersLogin
-    Left = 208
-    Top = 273
-  end
   object InterBaseUniProvider1: TInterBaseUniProvider
-    Left = 464
-    Top = 280
+    Left = 528
+    Top = 192
   end
   object qUsersRegister: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT ID FROM USERS WHERE TRIM(%s) = TRIM(:Value)'
+      'SELECT ID FROM USERS'
+      'WHERE TRIM(USERNAME) = TRIM(:USERNAME)'
+      '   OR TRIM(EMAIL) = TRIM(:EMAIL)'
+    )
+    FilterOptions = []
+    Left = 207
+    Top = 288
+    ParamData = <    
+      item
+        DataType = ftString
+        Name = 'USERNAME'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftString
+        Name = 'EMAIL'
+        ParamType = ptInput
+      end>
+  end
+  object qUsersInsert: TUniQuery
+    Connection = cDatenbank
+    SQL.Strings = (
+      'INSERT INTO USERS (USERNAME, EMAIL, PWDHASH)'
+      'VALUES (:USERNAME, :EMAIL, :PWDHASH)'
     )
     FilterOptions = []
     Left = 104
-    Top = 352
+    Top = 384
+    ParamData = <    
+      item
+        DataType = ftString
+        Name = 'USERNAME'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftString
+        Name = 'EMAIL'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'PWDHASH'
+      end>
+  end
+  object qUserCheckExists: TUniQuery
+    Connection = cDatenbank
+    SQL.Strings = (
+      'SELECT ID FROM USERS'
+      'WHERE TRIM(USERNAME) = TRIM(:USERNAME)'
+      '  OR TRIM(EMAIL) = TRIM(:EMAIL)'
+      ''
+    )
+    FilterOptions = []
+    Left = 207
+    Top = 384
     ParamData = <    
       item
         DataType = ftUnknown
-        Name = 'Value'
+        Name = 'USERNAME'
+      end    
+      item
+        DataType = ftUnknown
+        Name = 'EMAIL'
       end>
-  end
-  object sqUsersRegister: TUniDataSource
-    Left = 207
-    Top = 353
-  end
-  object qNextUserID: TUniQuery
-    Connection = cDatenbank
-    SQL.Strings = (
-      'SELECT GEN_ID(GEN_USERS_ID, 1) AS NEWID FROM RDB$DATABASE'
-    )
-    FilterOptions = []
-    Left = 99
-    Top = 447
   end
 end

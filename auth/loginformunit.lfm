@@ -44,6 +44,7 @@ object LoginForm: TLoginForm
     Font.Name = 'Sans'
     ParentFont = False
     TabOrder = 1
+    OnClick = btnRegisterClick
   end
   object lblLoginStatusMsg: TLabel
     Left = 16

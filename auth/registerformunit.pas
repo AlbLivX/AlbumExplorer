@@ -8,9 +8,7 @@ uses
   Classes, SysUtils, Forms, Controls, StdCtrls, Dialogs, Uni, UserObjectUnit;
 
 type
-
   { TRegisterForm }
-
   TRegisterForm = class(TForm)
     btnRegister: TButton;
     btnCancel: TButton;
@@ -30,7 +28,7 @@ type
     function ValidateInput: Boolean;
     function GetNewUsername: string;
   public
-    constructor Create(AOwner: TComponent; AQueryRegister, AQueryLogin: TUniQuery); reintroduce;
+    constructor Create(AOwner: TComponent; AQueryCheck, AQueryInsert, AQueryLogin: TUniQuery); reintroduce;
     destructor Destroy; override;
 
     property NewUsername: string read GetNewUsername;
@@ -45,10 +43,10 @@ implementation
 {$R *.lfm}
 
 { Constructor / Destructor }
-constructor TRegisterForm.Create(AOwner: TComponent; AQueryRegister, AQueryLogin: TUniQuery);
+constructor TRegisterForm.Create(AOwner: TComponent; AQueryCheck, AQueryInsert, AQueryLogin: TUniQuery);
 begin
   inherited Create(AOwner);
-  FUserObj := TUserObject.Create(AQueryRegister, AQueryLogin);
+  FUserObj := TUserObject.Create(AQueryCheck, AQueryInsert, AQueryLogin);
 end;
 
 destructor TRegisterForm.Destroy;
@@ -72,75 +70,32 @@ end;
 procedure TRegisterForm.btnRegisterClick(Sender: TObject);
 begin
   lblRegisterStatus.Caption := '';
-
   if not ValidateInput then Exit;
 
-  // Fill TUserObject with user data
   FUserObj.Username := Trim(edtUsername.Text);
   FUserObj.Email := Trim(edtEmail.Text);
   FUserObj.Password := Trim(edtPassword.Text);
 
-   //Check if username already exists
-  if FUserObj.UsernameExists(FUserObj.Username) then
-  begin
-    lblRegisterStatus.Caption := 'Username already exists.';
-    Exit;
-  end;
-
-
-   //Check if email already exists
-  if FUserObj.EmailExists(FUserObj.Email) then
-  begin
-    lblRegisterStatus.Caption := 'Email already exists.';
-    Exit;
-  end;
-
-  //Attempt registration
   if FUserObj.RegisterUser then
   begin
     lblRegisterStatus.Caption := 'Registration successful.';
-    ModalResult := mrOK;  // Close the form and indicate success
+    ModalResult := mrOK;
   end
   else
     lblRegisterStatus.Caption := 'Database error: ' + FUserObj.LastError;
 end;
 
-{ Validation }
+{ Input validation }
 function TRegisterForm.ValidateInput: Boolean;
 begin
   Result := False;
-
-  if Trim(edtUsername.Text) = '' then
-  begin
-    lblRegisterStatus.Caption := 'Please enter a username.';
-    Exit;
-  end;
-
-  if Trim(edtEmail.Text) = '' then
-  begin
-    lblRegisterStatus.Caption := 'Please enter an email.';
-    Exit;
-  end;
-
-  if Trim(edtPassword.Text) = '' then
-  begin
-    lblRegisterStatus.Caption := 'Please enter a password.';
-    Exit;
-  end;
-
-  if edtPassword.Text <> edtConfirmPassword.Text then
-  begin
-    lblRegisterStatus.Caption := 'Passwords do not match.';
-    Exit;
-  end;
-
-  if not chkAcceptTerms.Checked then
-  begin
-    lblRegisterStatus.Caption := 'Please accept the terms.';
-    Exit;
-  end;
-
+  if Trim(edtUsername.Text) = '' then begin lblRegisterStatus.Caption := 'Enter username'; Exit; end;
+  if Trim(edtEmail.Text) = '' then begin lblRegisterStatus.Caption := 'Enter email'; Exit; end;
+  if Trim(edtPassword.Text) = '' then begin lblRegisterStatus.Caption := 'Enter password'; Exit; end;
+  if edtPassword.Text <> edtConfirmPassword.Text then begin lblRegisterStatus.Caption := 'Passwords do not match'; Exit; end;
+  if not chkAcceptTerms.Checked then begin lblRegisterStatus.Caption := 'Accept terms'; Exit; end;
   Result := True;
 end;
 
 end.
+

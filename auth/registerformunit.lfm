@@ -73,6 +73,7 @@ object RegisterForm: TRegisterForm
     Width = 256
     Caption = 'Cancel'
     TabOrder = 4
+    OnClick = btnCancelClick
   end
   object edtEmail: TEdit
     Left = 16

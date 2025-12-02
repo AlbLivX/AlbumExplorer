@@ -5,12 +5,10 @@ unit LoginFormUnit;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, Dialogs,
-  UserObjectUnit, RegisterFormUnit, dDatenbank;
+  Classes, SysUtils, Forms, Controls, StdCtrls, Dialogs, UserObjectUnit, RegisterFormUnit, dDatenbank, Uni;
 
 type
   { TLoginForm }
-
   TLoginForm = class(TForm)
     edtUsername: TEdit;
     edtUserPassword: TEdit;
@@ -18,6 +16,7 @@ type
     btnLogin: TButton;
     btnRegister: TButton;
     lblLoginStatusMsg: TLabel;
+
     procedure btnLoginClick(Sender: TObject);
     procedure btnRegisterClick(Sender: TObject);
   private
@@ -34,26 +33,24 @@ implementation
 
 {$R *.lfm}
 
-{ Login Button Click }
+{ Login button }
 procedure TLoginForm.btnLoginClick(Sender: TObject);
 var
   User: TUserObject;
 begin
-  // Pass the queries from dmMain to TUserObject
-  User := TUserObject.Create(dmMain.qUsersRegister, dmMain.qUsersLogin);
+  // Create with 3 queries: checkExists, insert, login
+  User := TUserObject.Create(dmMain.qUserCheckExists, dmMain.qUsersInsert, dmMain.qUsersLogin);
   try
     if User.ValidateCredentials(edtUsername.Text, edtUserPassword.Text) then
     begin
       FLoginSuccessful := True;
       lblLoginStatusMsg.Caption := 'Login successful';
-
       if cbkStayLoggedIn.Checked then
       begin
         User.Username := edtUsername.Text;
         User.StayLoggedIn := True;
         User.SaveSettings;
       end;
-
       Close;
     end
     else
@@ -66,38 +63,22 @@ begin
   end;
 end;
 
-{ Register Button Click }
+{ Register button }
 procedure TLoginForm.btnRegisterClick(Sender: TObject);
 var
-  User: TUserObject;
   RegForm: TRegisterForm;
 begin
-  // Pass the queries to the register form so it can create its TUserObject correctly
-  RegForm := TRegisterForm.Create(Self, dmMain.qUsersRegister, dmMain.qUsersLogin);
+  // Pass the same three queries to the register form
+  RegForm := TRegisterForm.Create(Self, dmMain.qUserCheckExists, dmMain.qUsersInsert, dmMain.qUsersLogin);
   try
     if RegForm.ShowModal = mrOK then
-    begin
-      User := TUserObject.Create(dmMain.qUsersRegister, dmMain.qUsersLogin);
-      try
-        User.Username := RegForm.NewUsername;
-        User.Email := RegForm.edtEmail.Text;
-        User.Password := RegForm.edtPassword.Text;
-
-        if User.RegisterUser then
-          edtUsername.Text := User.Username
-        else
-          ShowMessage(User.LastError);
-
-      finally
-        User.Free;
-      end;
-    end;
+      edtUsername.Text := RegForm.NewUsername;
   finally
     RegForm.Free;
   end;
 end;
 
-{ Execute Login Form }
+{ Execute login form }
 function TLoginForm.Execute: Boolean;
 begin
   FLoginSuccessful := False;
