@@ -22,8 +22,8 @@ type
     FLastError: string;
 
     FQueryCheckExists: TUniQuery; // SELECT check
-    FQueryInsert: TUniQuery;      // INSERT
-    FQueryLogin: TUniQuery;       // SELECT for login
+    FQueryInsert:      TUniQuery;      // INSERT
+    FQueryLogin:       TUniQuery;       // SELECT for login
 
     procedure SetPassword(const APassword: string);
     procedure HandleDatabaseError(const E: Exception);
