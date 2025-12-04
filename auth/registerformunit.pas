@@ -5,7 +5,7 @@ unit RegisterFormUnit;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, Dialogs, Uni, UserObjectUnit;
+  Classes, SysUtils, Forms, Controls, StdCtrls, Dialogs, Uni, UserObjectUnit, dDatenbank;
 
 type
   { TRegisterForm }
@@ -79,6 +79,10 @@ begin
   if FUserObj.RegisterUser then
   begin
     lblRegisterStatus.Caption := 'Registration successful.';
+
+    // --- now you can use FUserObj.UserID for album ownership ---
+    // Example: dmMain.qAdressen.ParamByName('USERID').AsInteger := FUserObj.UserID;
+
     ModalResult := mrOK;
   end
   else

@@ -13,7 +13,6 @@ object Albums: TAlbums
   Font.Height = -13
   Font.Name = 'Sans'
   Font.Style = [fsBold]
-  LCLVersion = '4.2.0.0'
   object dbgAlbums: TDBGrid
     Left = 16
     Height = 344
@@ -70,7 +69,6 @@ object Albums: TAlbums
     Scrollbars = ssVertical
     TabOrder = 0
     OnCellClick = dbgAlbumsCellClick
-    OnMouseDown = dbgAlbumsMouseDown
   end
   object imgAlbumCover: TImage
     Left = 16
@@ -123,20 +121,6 @@ object Albums: TAlbums
     ScrollBars = ssVertical
     TabOrder = 2
   end
-  object btnDBConnect: TButton
-    Left = 464
-    Height = 29
-    Top = 16
-    Width = 72
-    Caption = 'Connect'
-    Font.Color = 34560
-    Font.Height = -15
-    Font.Name = 'Sans'
-    Font.Style = [fsBold]
-    ParentFont = False
-    TabOrder = 3
-    OnClick = btnDBConnectClick
-  end
   object btnLoadAlbumCover: TButton
     Left = 464
     Height = 30
@@ -149,7 +133,7 @@ object Albums: TAlbums
     Font.Name = 'Sans'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 4
+    TabOrder = 3
     OnClick = btnLoadAlbumCoverClick
   end
   object edtAlbumSearch: TEdit
@@ -157,9 +141,8 @@ object Albums: TAlbums
     Height = 30
     Top = 232
     Width = 248
-    TabOrder = 6
+    TabOrder = 5
     TextHint = 'Search by album or artist...'
-    OnChange = edtAlbumSearchChange
   end
   object btnAlbumSearch: TButton
     Left = 743
@@ -173,7 +156,7 @@ object Albums: TAlbums
     Font.Name = 'Sans'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 5
+    TabOrder = 4
     OnClick = btnAlbumSearchClick
   end
   object btnClearSearchClick: TSpeedButton
@@ -486,7 +469,6 @@ object Albums: TAlbums
     ShowHint = True
     ParentFont = False
     ParentShowHint = False
-    OnClick = btnClearSearchClick
   end
   object dlgAlbumCover: TOpenDialog
     Left = 840
@@ -497,11 +479,9 @@ object Albums: TAlbums
     Top = 72
     object miViewTracks: TMenuItem
       Caption = 'View Tracks'
-      OnClick = miViewTracksClick
     end
     object miEditAlbum: TMenuItem
       Caption = 'Edit Album'
-      OnClick = miEditAlbumClick
     end
   end
 end

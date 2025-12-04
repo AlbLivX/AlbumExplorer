@@ -103,6 +103,26 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="UserObjectUnit"/>
       </Unit>
+      <Unit>
+        <Filename Value="mainform/albumunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="AlbumUnit"/>
+      </Unit>
+      <Unit>
+        <Filename Value="mainform/albummanagerunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="AlbumManagerUnit"/>
+      </Unit>
+      <Unit>
+        <Filename Value="songsform/songunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SongUnit"/>
+      </Unit>
+      <Unit>
+        <Filename Value="songsform/songmanagerunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SongManagerUnit"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

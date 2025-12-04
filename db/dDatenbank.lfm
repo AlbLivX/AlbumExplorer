@@ -17,17 +17,24 @@ object dmMain: TdmMain
   object qAdressen: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT ID, '
-      '       ALBUM, '
-      '       ARTIST, '
+      'SELECT ID,'
+      '       ALBUM,'
+      '       ARTIST,'
       '       RELEASEYEAR,'
       '       DESCRIPTION,'
-      '       ALBUMCOVER'
-      'FROM Album;'
+      '       ALBUMCOVER,'
+      '       USERID'
+      'FROM Album'
+      'WHERE USERID = :UID;'
     )
     FilterOptions = []
     Left = 104
     Top = 88
+    ParamData = <    
+      item
+        DataType = ftUnknown
+        Name = 'UID'
+      end>
   end
   object sqAdressen: TUniDataSource
     DataSet = qAdressen
@@ -67,7 +74,9 @@ object dmMain: TdmMain
   object qUsersLogin: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT PWDHASH FROM USERS'
+      'SELECT ID,'
+      '       PWDHASH'
+      'FROM USERS'
       'WHERE TRIM(USERNAME) = TRIM(:USERNAME)'
       ''
     )

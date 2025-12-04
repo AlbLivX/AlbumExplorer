@@ -20,10 +20,11 @@ type
     FPassword: string;
     FStayLoggedIn: Boolean;
     FLastError: string;
+    FUserID: Integer; // <-- added property to store DB ID
 
     FQueryCheckExists: TUniQuery; // SELECT check
-    FQueryInsert:      TUniQuery;      // INSERT
-    FQueryLogin:       TUniQuery;       // SELECT for login
+    FQueryInsert:      TUniQuery; // INSERT
+    FQueryLogin:       TUniQuery; // SELECT for login
 
     procedure SetPassword(const APassword: string);
     procedure HandleDatabaseError(const E: Exception);
@@ -35,6 +36,7 @@ type
     property Password: string write SetPassword;
     property StayLoggedIn: Boolean read FStayLoggedIn write FStayLoggedIn;
     property LastError: string read FLastError;
+    property UserID: Integer read FUserID; // <-- read-only property
 
     function ValidateCredentials(const AUsername, APassword: string): Boolean;
     function RegisterUser: Boolean;
@@ -54,6 +56,7 @@ begin
   FPassword := '';
   FStayLoggedIn := False;
   FLastError := '';
+  FUserID := 0;
   FQueryCheckExists := AQueryCheck;
   FQueryInsert := AQueryInsert;
   FQueryLogin := AQueryLogin;
@@ -118,14 +121,18 @@ begin
     end;
     FQueryCheckExists.Close;
 
-    // --- Insert user (ID auto-assigned by DB) ---
+    // --- Insert user and get auto-generated ID ---
     FQueryInsert.Close;
+    FQueryInsert.SQL.Text :=
+      'INSERT INTO USERS (USERNAME, EMAIL, PWDHASH) ' +
+      'VALUES (:USERNAME, :EMAIL, :PWDHASH) RETURNING ID';
     FQueryInsert.ParamByName('USERNAME').AsString := Trim(FUsername);
     FQueryInsert.ParamByName('EMAIL').AsString := Trim(FEmail);
     FQueryInsert.ParamByName('PWDHASH').AsString := Trim(FPassword);
-    FQueryInsert.ExecSQL;
+    FQueryInsert.Open; // RETURNING ID fills the dataset
 
-    // Commit (dmMain.cDatenbank is your TUniConnection)
+    FUserID := FQueryInsert.FieldByName('ID').AsInteger; // <-- store new user's DB ID
+
     dmMain.cDatenbank.Commit;
     Result := True;
   except
@@ -137,7 +144,7 @@ begin
   end;
 end;
 
-{ Validate credentials (Option B) }
+{ Validate credentials }
 function TUserObject.ValidateCredentials(const AUsername, APassword: string): Boolean;
 var
   StoredHash: string;

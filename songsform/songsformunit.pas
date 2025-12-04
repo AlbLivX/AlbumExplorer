@@ -159,6 +159,6 @@ begin
       dbMemoLyrics.Text := 'No lyrics found or an error occurred.';
   end;
 end;
-
 end.
+
 

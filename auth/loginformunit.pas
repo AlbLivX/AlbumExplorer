@@ -5,7 +5,7 @@ unit LoginFormUnit;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, Dialogs, UserObjectUnit, RegisterFormUnit, dDatenbank, Uni;
+  Classes, SysUtils, Forms, Controls, StdCtrls, Dialogs, UserObjectUnit, RegisterFormUnit, dDatenbank;
 
 type
   { TLoginForm }
@@ -45,12 +45,31 @@ begin
     begin
       FLoginSuccessful := True;
       lblLoginStatusMsg.Caption := 'Login successful';
+
+      // --- STORE LOGGED IN USER ID ---
+      dmMain.CurrentUserID :=
+        dmMain.qUsersLogin.FieldByName('ID').AsInteger;
+
+      // --- Connect the database ---
+      if not dmMain.cDatenbank.Connected then
+        dmMain.cDatenbank.Connected := True;
+
+      // --- OPEN DATASETS FILTERED BY USER ---
+      dmMain.qAdressen.Close;
+      dmMain.qAdressen.ParamByName('UID').AsInteger := dmMain.CurrentUserID;
+      dmMain.qAdressen.Open;
+
+      if not dmMain.qSongs.Active then
+        dmMain.qSongs.Open;
+
+      // Save settings if requested
       if cbkStayLoggedIn.Checked then
       begin
         User.Username := edtUsername.Text;
         User.StayLoggedIn := True;
         User.SaveSettings;
       end;
+
       Close;
     end
     else
@@ -62,6 +81,8 @@ begin
     User.Free;
   end;
 end;
+
+
 
 { Register button }
 procedure TLoginForm.btnRegisterClick(Sender: TObject);

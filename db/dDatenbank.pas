@@ -5,7 +5,7 @@ unit dDatenbank;
 interface
 
 uses
-  Classes, SysUtils, Uni, DB, InterBaseUniProvider;
+  Classes, SysUtils, Uni, InterBaseUniProvider;
 
 type
 
@@ -27,8 +27,8 @@ type
     {User Quiries}
     qUsersLogin:           TUniQuery;
     qUsersRegister:        TUniQuery;
-    qUsersInsert: TUniQuery;
-    qUserCheckExists: TUniQuery;
+    qUsersInsert:          TUniQuery;
+    qUserCheckExists:      TUniQuery;
 
 
 
@@ -36,6 +36,7 @@ type
   private
 
   public
+    CurrentUserID: Integer;
 
   end;
 

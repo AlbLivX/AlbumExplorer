@@ -3,8 +3,8 @@ program Album;
 {$mode objfpc}{$H+}
 
 uses
-  Forms, Interfaces, LCLType, DB,
-  dDatenbank, Uni, ibprovider10 , LoginFormUnit, MainForm;
+  Forms, Interfaces, LCLType, DB, dDatenbank, Uni, ibprovider10, LoginFormUnit,
+  MainForm, AlbumUnit, SongUnit, SongManagerUnit;
 
 {$R *.res}
 
@@ -13,10 +13,6 @@ begin
   Application.CreateForm(TdmMain, dmMain);
   Application.CreateForm(TAlbums, Albums);
   Application.CreateForm(TLoginForm, LoginForm);
-
-
-
-
 
 
   if LoginForm.Execute then
