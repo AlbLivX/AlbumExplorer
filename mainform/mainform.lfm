@@ -13,6 +13,7 @@ object Albums: TAlbums
   Font.Height = -13
   Font.Name = 'Sans'
   Font.Style = [fsBold]
+  LCLVersion = '4.2.0.0'
   object dbgAlbums: TDBGrid
     Left = 16
     Height = 344
