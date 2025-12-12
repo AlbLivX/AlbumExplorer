@@ -5,7 +5,8 @@ unit LoginFormUnit;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, Dialogs, UserObjectUnit, RegisterFormUnit, dDatenbank;
+  Classes, SysUtils, Forms, Controls, StdCtrls, Dialogs,
+  dDatenbank, UserObjectUnit, RegisterFormUnit;
 
 type
   { TLoginForm }
@@ -33,36 +34,34 @@ implementation
 
 {$R *.lfm}
 
-{ Login button }
 procedure TLoginForm.btnLoginClick(Sender: TObject);
 var
   User: TUserObject;
 begin
-  // Create with 3 queries: checkExists, insert, login
-  User := TUserObject.Create(dmMain.qUserCheckExists, dmMain.qUsersInsert, dmMain.qUsersLogin);
+  // Create user object using the queries from dmMain
+  User := TUserObject.Create(dmMain.qUserCheckExists,
+                             dmMain.qUsersInsert,
+                             dmMain.qUsersLogin);
   try
     if User.ValidateCredentials(edtUsername.Text, edtUserPassword.Text) then
     begin
       FLoginSuccessful := True;
       lblLoginStatusMsg.Caption := 'Login successful';
 
-      // --- STORE LOGGED IN USER ID ---
-      dmMain.CurrentUserID :=
-        dmMain.qUsersLogin.FieldByName('ID').AsInteger;
+      // Store logged-in user ID
+      dmMain.CurrentUserID := dmMain.qUsersLogin.FieldByName('ID').AsInteger;
 
-      // --- Connect the database ---
-      if not dmMain.cDatenbank.Connected then
-        dmMain.cDatenbank.Connected := True;
+      // Open album dataset filtered by user
+      dmMain.qAlbum.Close;
+      dmMain.qAlbum.ParamByName('UID').AsInteger := dmMain.CurrentUserID;
+      dmMain.qAlbum.ParamByName('SEARCH').AsString := '%';
+      dmMain.qAlbum.Open;
 
-      // --- OPEN DATASETS FILTERED BY USER ---
-      dmMain.qAdressen.Close;
-      dmMain.qAdressen.ParamByName('UID').AsInteger := dmMain.CurrentUserID;
-      dmMain.qAdressen.Open;
-
+      // Open songs dataset
       if not dmMain.qSongs.Active then
         dmMain.qSongs.Open;
 
-      // Save settings if requested
+      // Save settings if "Stay logged in" checked
       if cbkStayLoggedIn.Checked then
       begin
         User.Username := edtUsername.Text;
@@ -82,15 +81,14 @@ begin
   end;
 end;
 
-
-
-{ Register button }
 procedure TLoginForm.btnRegisterClick(Sender: TObject);
 var
   RegForm: TRegisterForm;
 begin
-  // Pass the same three queries to the register form
-  RegForm := TRegisterForm.Create(Self, dmMain.qUserCheckExists, dmMain.qUsersInsert, dmMain.qUsersLogin);
+  RegForm := TRegisterForm.Create(Self,
+                                   dmMain.qUserCheckExists,
+                                   dmMain.qUsersInsert,
+                                   dmMain.qUsersLogin);
   try
     if RegForm.ShowModal = mrOK then
       edtUsername.Text := RegForm.NewUsername;
@@ -99,7 +97,6 @@ begin
   end;
 end;
 
-{ Execute login form }
 function TLoginForm.Execute: Boolean;
 begin
   FLoginSuccessful := False;

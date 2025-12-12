@@ -19,9 +19,9 @@ type
     InterBaseUniProvider1: TInterBaseUniProvider;
 
     {Album & Track Queries and DataSource}
-    qAdressen:             TUniQuery;
+    qAlbum:             TUniQuery;
     qSongs:                TUniQuery;
-    sqAdressen:            TUniDataSource;
+    sqAlbum:            TUniDataSource;
     sqSongs:               TUniDataSource;
 
     {User Quiries}

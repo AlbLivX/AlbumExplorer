@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, DBCtrls, DBGrids,
-  StdCtrls, ExtCtrls, Menus, dDatenbank, DB, LyricsFetcher, uConstants,  Uni;
+  StdCtrls, ExtCtrls, Menus, dDatenbank, DB, LyricsFetcher,  Uni;
 
 type
   { TTracks: Form for managing songs of an album }
@@ -71,7 +71,7 @@ begin
   if not CanEditDataset then Exit;
 
   // Display lyrics if available
-  Field := dmMain.qSongs.FindField(FIELD_LYRICS);
+  Field := dmMain.qSongs.FindField('LYRICS');
   if Assigned(Field) and (Trim(Field.AsString) <> '') then
     dbMemoLyrics.Text := Field.AsString
   else
@@ -79,7 +79,7 @@ begin
 
   // Load song cover image if available
   imgSongCover.Picture := nil;
-  Field := dmMain.qSongs.FindField(FIELD_ALBUM_COVER);
+  Field := dmMain.qSongs.FindField('ALBUMCOVER');
   if Assigned(Field) and (Field.DataType = ftBlob) and not Field.IsNull then
   begin
     BlobStream := dmMain.qSongs.CreateBlobStream(Field, bmRead);
@@ -102,7 +102,7 @@ begin
     dmMain.cDatenbank.Connected := True;
 
   dmMain.qSongs.Close;
-  dmMain.qSongs.ParamByName(PARAM_ALBUM_ID).AsInteger := AlbumID;
+  dmMain.qSongs.ParamByName('ALBUMID').AsInteger := AlbumID;
   dmMain.qSongs.Open;
 end;
 
@@ -111,7 +111,7 @@ end;
 procedure TTracks.dbgSongsCellClick(Column: TColumn);
 begin
   // Handles song grid click to display lyrics and details
-  if CanEditDataset and (Column.FieldName = FIELD_SONG_TITLE) then
+  if CanEditDataset and (Column.FieldName = 'SONGTITLE') then
     HandleSongClick;
 end;
 
@@ -125,13 +125,13 @@ begin
   // Fetch and display lyrics for the selected song
   if not CanEditDataset then Exit;
 
-  SongID := dmMain.qSongs.FieldByName(FIELD_SONG_ID).AsInteger;
-  SongTitle := dmMain.qSongs.FieldByName(FIELD_SONG_TITLE).AsString;
-  Artist := dmMain.qSongs.FieldByName(FIELD_ARTIST).AsString;
+  SongID := dmMain.qSongs.FieldByName('SONGID').AsInteger;
+  SongTitle := dmMain.qSongs.FieldByName('SONGTITLE').AsString;
+  Artist := dmMain.qSongs.FieldByName('ARTIST').AsString;
 
   Lyrics := '';
-  if Assigned(dmMain.qSongs.FindField(FIELD_LYRICS)) then
-    Lyrics := Trim(dmMain.qSongs.FieldByName(FIELD_LYRICS).AsString);
+  if Assigned(dmMain.qSongs.FindField('LYRICS')) then
+    Lyrics := Trim(dmMain.qSongs.FieldByName('LYRICS').AsString);
 
   if Lyrics <> '' then
     dbMemoLyrics.Text := Lyrics
@@ -147,7 +147,7 @@ begin
       try
         if not (dmMain.qSongs.State in [dsEdit, dsInsert]) then
           dmMain.qSongs.Edit;
-        dmMain.qSongs.FieldByName(FIELD_LYRICS).AsString := Lyrics;
+        dmMain.qSongs.FieldByName('LYRICS').AsString := Lyrics;
         dmMain.qSongs.Post;
       except
         on E: Exception do

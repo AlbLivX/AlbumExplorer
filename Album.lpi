@@ -71,11 +71,6 @@
         <UnitName Value="SearchHelper"/>
       </Unit>
       <Unit>
-        <Filename Value="uconstants.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="uConstants"/>
-      </Unit>
-      <Unit>
         <Filename Value="auth/loginformunit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="LoginForm"/>
@@ -136,6 +131,9 @@
       </Item>
       <Item>
         <Name Value="EFOpenError"/>
+      </Item>
+      <Item>
+        <Name Value="EHTTPClient"/>
       </Item>
     </Exceptions>
   </Debugging>

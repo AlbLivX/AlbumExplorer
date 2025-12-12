@@ -100,7 +100,7 @@ object Tracks: TTracks
     BorderStyle = bsNone
     Color = 1054487
     DataField = 'DESCRIPTION'
-    DataSource = dmMain.sqAdressen
+    DataSource = dmMain.sqAlbum
     Font.Color = clWhite
     Font.Height = -13
     Font.Name = 'Sans'

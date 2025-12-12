@@ -14,7 +14,7 @@ object dmMain: TdmMain
     Top = 88
     EncryptedPassword = '8CFF93FF8AFFCFFFCEFF'
   end
-  object qAdressen: TUniQuery
+  object qAlbum: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
       'SELECT ID,'
@@ -25,34 +25,42 @@ object dmMain: TdmMain
       '       ALBUMCOVER,'
       '       USERID'
       'FROM Album'
-      'WHERE USERID = :UID;'
+      'WHERE USERID = :UID'
+      '  AND (ALBUM LIKE :SEARCH OR ARTIST LIKE :SEARCH)'
     )
     FilterOptions = []
     Left = 104
     Top = 88
     ParamData = <    
       item
-        DataType = ftUnknown
+        DataType = ftInteger
         Name = 'UID'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftString
+        Name = 'SEARCH'
+        ParamType = ptInput
       end>
   end
-  object sqAdressen: TUniDataSource
-    DataSet = qAdressen
+  object sqAlbum: TUniDataSource
+    DataSet = qAlbum
     Left = 207
     Top = 88
   end
   object qSongs: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT s.ID, '
-      '       s.SONGTITLE, '
-      '       s.DURATION, '
-      '       a.ID, '
-      '       s.ALBUMID, '
-      '       a.ARTIST, '
-      '       a.RELEASEYEAR,  '
-      '       a.ALBUMCOVER,'
-      '       s.LYRICS'
+      'SELECT '
+      '  s.ID AS SONGID,'
+      '  s.SONGTITLE,'
+      '  s.DURATION,'
+      '  a.ID AS ALBUMID,'
+      '  s.ALBUMID,'
+      '  a.ARTIST,'
+      '  a.RELEASEYEAR,'
+      '  a.ALBUMCOVER,'
+      '  s.LYRICS'
       'FROM Songs s'
       'JOIN Album a ON s.ALBUMID = a.ID'
       'WHERE s.ALBUMID = :ALBUMID'
@@ -62,8 +70,9 @@ object dmMain: TdmMain
     Top = 184
     ParamData = <    
       item
-        DataType = ftUnknown
+        DataType = ftInteger
         Name = 'ALBUMID'
+        ParamType = ptInput
       end>
   end
   object sqSongs: TUniDataSource
@@ -74,9 +83,7 @@ object dmMain: TdmMain
   object qUsersLogin: TUniQuery
     Connection = cDatenbank
     SQL.Strings = (
-      'SELECT ID,'
-      '       PWDHASH'
-      'FROM USERS'
+      'SELECT ID, PWDHASH FROM USERS'
       'WHERE TRIM(USERNAME) = TRIM(:USERNAME)'
       ''
     )
@@ -102,8 +109,8 @@ object dmMain: TdmMain
       '   OR TRIM(EMAIL) = TRIM(:EMAIL)'
     )
     FilterOptions = []
-    Left = 207
-    Top = 288
+    Left = 104
+    Top = 480
     ParamData = <    
       item
         DataType = ftString
@@ -137,8 +144,9 @@ object dmMain: TdmMain
         ParamType = ptInput
       end    
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'PWDHASH'
+        ParamType = ptInput
       end>
   end
   object qUserCheckExists: TUniQuery
@@ -150,16 +158,18 @@ object dmMain: TdmMain
       ''
     )
     FilterOptions = []
-    Left = 207
-    Top = 384
+    Left = 104
+    Top = 568
     ParamData = <    
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'USERNAME'
+        ParamType = ptInput
       end    
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'EMAIL'
+        ParamType = ptInput
       end>
   end
 end
