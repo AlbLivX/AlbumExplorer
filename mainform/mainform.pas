@@ -6,42 +6,39 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, DBGrids, ExtCtrls,
-  DBCtrls, StdCtrls, Buttons, Menus, dDatenbank, SongsFormUnit, DB, Uni, Grids;
+  DBCtrls, StdCtrls, Buttons, Menus, dDatenbank, SongsFormUnit, DB, Uni, Grids,
+  FPImage, FPReadJPEG;  // <-- REQUIRED for JPG support
 
 type
-  { TAlbums: Main form for managing albums and their details }
-  TAlbums = class(TForm)
-    btnLoadAlbumCover:      TButton;
-    btnAlbumSearch:         TButton;
-    btnClearSearch:         TSpeedButton;
-    dbgAlbums:              TDBGrid;
-    dbMemoAlbumDescription: TDBMemo;
-    edtAlbumSearch:         TEdit;
-    imgAlbumCover:          TImage;
-    dlgAlbumCover:          TOpenDialog;
-    miEditAlbum:            TMenuItem;
-    miViewTracks:           TMenuItem;
-    navAlbums:              TDBNavigator;
-    pmAlbum:                TPopupMenu;
 
-    procedure btnClearSearchClickClick(Sender: TObject);
+  { TAlbums }
+
+  TAlbums = class(TForm)
+    btnClearSearch: TSpeedButton;
+    dbgAlbums: TDBGrid;
+    dbMemoAlbumDescription: TDBMemo;
+    edtAlbumSearch: TEdit;
+    BackgroundImage: TImage;
+    imgAlbumCover: TImage;
+    dlgAlbumCover: TOpenDialog;
+    miEditAlbum: TMenuItem;
+    miViewTracks: TMenuItem;
+    pmAlbum: TPopupMenu;
+
     procedure FormCreate(Sender: TObject);
-    procedure btnLoadAlbumCoverClick(Sender: TObject);
     procedure btnAlbumSearchClick(Sender: TObject);
     procedure btnClearSearchClick(Sender: TObject);
     procedure edtAlbumSearchChange(Sender: TObject);
     procedure dbgAlbumsMouseDown(Sender: TObject; Button: TMouseButton;
-                                 Shift: TShiftState; X, Y: Integer);
+      Shift: TShiftState; X, Y: Integer);
     procedure dbgAlbumsCellClick(Column: TColumn);
     procedure miEditAlbumClick(Sender: TObject);
     procedure miViewTracksClick(Sender: TObject);
+    procedure ImageLoadAlbumCover(Sender: TObject);
 
   private
-    { Displays the current selected record in the form controls }
-    procedure DisplayCurrentRecord(DataSet: TDataSet = nil);
-
-    { Checks if dataset is available and editable }
-    function  CanEditDataset: Boolean;
+    procedure DisplayCurrentRecord;
+    function CanEditDataset: Boolean;
   end;
 
 var
@@ -51,138 +48,127 @@ implementation
 
 {$R *.lfm}
 
-uses
-  Variants;
+{ -------------------- FORM INIT -------------------- }
 
-{ Form Initialization }
 procedure TAlbums.FormCreate(Sender: TObject);
+const
+  BG_IMAGE_PATH =
+    '/home/LAlbrecht/Entwicklung/Album/res/electric-guitar-with-neon-light.jpg';
 begin
-  // Attach popup menu to DBGrid
   dbgAlbums.PopupMenu := pmAlbum;
+
+  { ---- BACKGROUND IMAGE ---- }
+  BackgroundImage.Align := alClient;
+  BackgroundImage.Stretch := True;
+  BackgroundImage.Proportional := True;
+  BackgroundImage.SendToBack;
+
+  if FileExists(BG_IMAGE_PATH) then
+    BackgroundImage.Picture.LoadFromFile(BG_IMAGE_PATH)
+  else
+    ShowMessage('Background image not found:'#10 + BG_IMAGE_PATH);
+
+  { ---- AUTO database connection ---- }
+  if Assigned(dmMain) then
+  begin
+    if not dmMain.cDatenbank.Connected then
+      dmMain.cDatenbank.Connected := True;
+
+    if not dmMain.qAlbum.Active then
+      dmMain.qAlbum.Open;
+
+    DisplayCurrentRecord;
+  end;
 end;
 
-procedure TAlbums.btnClearSearchClickClick(Sender: TObject);
-begin
 
-end;
 
-{ Dataset Utilities }
+{ -------------------- DATASET UTIL -------------------- }
+
 function TAlbums.CanEditDataset: Boolean;
 begin
-  Result := Assigned(dmMain)
-         and Assigned(dmMain.qAlbum)
-         and dmMain.qAlbum.Active
-         and not dmMain.qAlbum.IsEmpty;
+  Result :=
+    Assigned(dmMain) and
+    Assigned(dmMain.qAlbum) and
+    dmMain.qAlbum.Active and
+    not dmMain.qAlbum.IsEmpty;
 end;
 
-procedure TAlbums.DisplayCurrentRecord(DataSet: TDataSet);
+procedure TAlbums.DisplayCurrentRecord;
 var
-  Field: TBlobField;
-  BlobStream: TMemoryStream;
+  Field: TField;
+  BlobStream: TStream;
 begin
   if not CanEditDataset then Exit;
 
-  // Show album description
-  dbMemoAlbumDescription.Text := dmMain.qAlbum.FieldByName('DESCRIPTION').AsString;
-
-  // Load album cover
-  Field := dmMain.qAlbum.FieldByName('ALBUMCOVER') as TBlobField;
   imgAlbumCover.Picture := nil;
-  if Assigned(Field) and not Field.IsNull then
-  begin
-    BlobStream := TMemoryStream.Create;
-    try
-      Field.SaveToStream(BlobStream);   // safer than CreateBlobStream
-      BlobStream.Position := 0;
-      imgAlbumCover.Picture.LoadFromStream(BlobStream);
-    finally
-      BlobStream.Free;
-    end;
+
+  Field := dmMain.qAlbum.FieldByName('ALBUMCOVER');
+  if not Assigned(Field) or Field.IsNull then Exit;
+
+  BlobStream := dmMain.qAlbum.CreateBlobStream(Field, bmRead);
+  try
+    BlobStream.Position := 0;
+    imgAlbumCover.Picture.LoadFromStream(BlobStream);
+  finally
+    BlobStream.Free;
   end;
 end;
 
-
-{ Database Actions }
-
+{ -------------------- SEARCH -------------------- }
 
 procedure TAlbums.btnAlbumSearchClick(Sender: TObject);
-var
-  FilterText: string;
 begin
-  // Filters albums based on search text in album or artist fields
-  if not Assigned(dmMain) or not Assigned(dmMain.qAlbum) then Exit;
-
-  FilterText := Trim(edtAlbumSearch.Text);
-
-  if FilterText = '' then
-  begin
-    dmMain.qAlbum.Filtered := False;
-    Exit;
-  end;
+  if not CanEditDataset then Exit;
 
   dmMain.qAlbum.Filtered := False;
+  dmMain.qAlbum.Filter :=
+      '(Album LIKE ' + QuotedStr('%' + edtAlbumSearch.Text + '%') + ') OR ' +
+      '(Artist LIKE ' + QuotedStr('%' + edtAlbumSearch.Text + '%') + ') OR ' +
+      '(ReleaseYear LIKE ' + QuotedStr('%' + edtAlbumSearch.Text + '%') + ')';
   dmMain.qAlbum.Filtered := True;
 
-  if not dmMain.qAlbum.IsEmpty then
-    DisplayCurrentRecord;
+  DisplayCurrentRecord;
 end;
 
 procedure TAlbums.btnClearSearchClick(Sender: TObject);
 begin
-  // Clears search input and removes filtering
   edtAlbumSearch.Text := '';
-  edtAlbumSearch.SetFocus;
-  if Assigned(dmMain) and Assigned(dmMain.qAlbum) then
+  if Assigned(dmMain.qAlbum) then
     dmMain.qAlbum.Filtered := False;
-  btnClearSearch.Visible := False;
 end;
 
 procedure TAlbums.edtAlbumSearchChange(Sender: TObject);
 begin
-  // Triggered on search text change: updates filtering and clear button visibility
-  if Assigned(btnClearSearch) then
-    btnClearSearch.Visible := edtAlbumSearch.Text <> '';
   btnAlbumSearchClick(Sender);
 end;
 
-{ Grid Right-Click Handling }
+{ -------------------- GRID -------------------- }
+
 procedure TAlbums.dbgAlbumsMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
   Coord: TGridCoord;
 begin
-  // Select the row under right-click in Lazarus DBGrid
   if Button = mbRight then
   begin
     Coord := dbgAlbums.MouseCoord(X, Y);
     if (Coord.Y > 0) and CanEditDataset then
-      dmMain.qAlbum.RecNo := Coord.Y; // select row under mouse
+      dmMain.qAlbum.RecNo := Coord.Y;
   end;
 end;
 
-{ Grid Left-Click Handling }
 procedure TAlbums.dbgAlbumsCellClick(Column: TColumn);
 begin
-  // Display current album details when left-clicking a row
-  if CanEditDataset then
-    DisplayCurrentRecord;
+  DisplayCurrentRecord;
 end;
 
-{ Popup Menu Actions }
+{ -------------------- POPUP -------------------- }
+
 procedure TAlbums.miEditAlbumClick(Sender: TObject);
 begin
   if CanEditDataset then
-  begin
-    // Put dataset into edit mode
     dmMain.qAlbum.Edit;
-
-    // Skip ID column: start editing the first editable column (index 1 or by field name)
-    dbgAlbums.SelectedIndex := 1;
-
-    // Enable editing in the grid
-    dbgAlbums.Options := dbgAlbums.Options + [dgEditing];
-    dbgAlbums.EditorMode := True;
-  end;
 end;
 
 procedure TAlbums.miViewTracksClick(Sender: TObject);
@@ -200,31 +186,38 @@ begin
   Tracks.Show;
 end;
 
-{ UI Actions }
-procedure TAlbums.btnLoadAlbumCoverClick(Sender: TObject);
+{ -------------------- IMAGE WRITE -------------------- }
+
+procedure TAlbums.ImageLoadAlbumCover(Sender: TObject);
 var
   FileStream: TFileStream;
-  BlobField: TBlobField;
+  BlobStream: TStream;
+  Field: TField;
 begin
   if not CanEditDataset then Exit;
   if not dlgAlbumCover.Execute then Exit;
 
-  BlobField := dmMain.qAlbum.FieldByName('ALBUMCOVER') as TBlobField;
-  if not Assigned(BlobField) then
+  Field := dmMain.qAlbum.FieldByName('ALBUMCOVER');
+  if not Assigned(Field) then
     raise Exception.Create('ALBUMCOVER field missing');
 
   dmMain.qAlbum.Edit;
 
   FileStream := TFileStream.Create(dlgAlbumCover.FileName, fmOpenRead);
   try
-    BlobField.LoadFromStream(FileStream);   // Load image directly into field
+    BlobStream := dmMain.qAlbum.CreateBlobStream(Field, bmWrite);
+    try
+      BlobStream.CopyFrom(FileStream, FileStream.Size);
+    finally
+      BlobStream.Free;
+    end;
   finally
     FileStream.Free;
   end;
 
   dmMain.qAlbum.Post;
   DisplayCurrentRecord;
-  ShowMessage('Image saved successfully!');
 end;
 
 end.
+
