@@ -7,6 +7,7 @@ object LoginForm: TLoginForm
   Caption = 'Login Form'
   ClientHeight = 414
   ClientWidth = 422
+  Position = poMainFormCenter
   object lblLoginFormTitle: TLabel
     Left = 163
     Height = 23
