@@ -60,7 +60,7 @@
       <Unit>
         <Filename Value="mainform/mainform.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Albums"/>
+        <ComponentName Value="pmAlbum"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainFormUnit"/>

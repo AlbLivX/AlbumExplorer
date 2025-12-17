@@ -7,31 +7,33 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs,
   DBGrids, ExtCtrls, StdCtrls, Buttons, Menus, DB,
-  dDatenbank, SongsFormUnit, AlbumModel, DBCtrls, Grids;
+  dDatenbank, SongsFormUnit, AlbumModel, DBCtrls, Grids, ExtDlgs;
 
 type
 
-  { TAlbums }
+  { TpmAlbum }
 
-  TAlbums = class(TForm)
-    btnClearSearch:         TSpeedButton;
+  TpmAlbum = class(TForm)
     dbgAlbums:              TDBGrid;
-    dbMemoAlbumDescription: TDBMemo;
     edtAlbumSearch:         TEdit;
     imgAlbumCover:          TImage;
+    dlgAlbumCover:          TOpenPictureDialog;
     pmAlbum:                TPopupMenu;
     miEditAlbum:            TMenuItem;
     miViewTracks:           TMenuItem;
-    dlgAlbumCover:          TOpenDialog;
-    BackgroundImage:        TImage;
+    btnClearSearch:         TSpeedButton;
+    dbMemoAlbumDescription: TDBMemo;
 
-    procedure FormCreate          (Sender: TObject);
-    procedure edtAlbumSearchChange(Sender: TObject);
-    procedure btnClearSearchClick (Sender: TObject);
-    procedure dbgAlbumsCellClick  (Column: TColumn);
-    procedure miEditAlbumClick    (Sender: TObject);
-    procedure miViewTracksClick   (Sender: TObject);
-    procedure ImageLoadAlbumCover (Sender: TObject);
+    procedure FormCreate           (Sender: TObject);
+    procedure edtAlbumSearchChange (Sender: TObject);
+    procedure btnClearSearchClick  (Sender: TObject);
+    procedure dbgAlbumsCellClick   (Column: TColumn);
+    procedure miEditAlbumClick     (Sender: TObject);
+    procedure miViewTracksClick    (Sender: TObject);
+    procedure ImageLoadAlbumCover  (Sender: TObject);
+    procedure btnClearSearchVisible(Sender: TObject);
+    procedure edtAlbumSearchExit   (Sender: TObject);
+
 
   private
     FAlbumModel: TAlbumModel;
@@ -41,11 +43,11 @@ type
     procedure SyncDatasetWithGrid;
 
     procedure AlbumAfterScroll(DataSet: TDataSet);
-    procedure AlbumDataChange(Sender: TObject; Field: TField);
+    procedure AlbumDataChange (Sender: TObject; Field: TField);
   end;
 
 var
-  Albums: TAlbums;
+  pmAlbum: TpmAlbum;
 
 implementation
 
@@ -53,7 +55,7 @@ implementation
 
 { -------------------- INIT -------------------- }
 
-procedure TAlbums.FormCreate(Sender: TObject);
+procedure TpmAlbum.FormCreate(Sender: TObject);
 begin
   if Assigned(dmMain) and Assigned(dmMain.qAlbum) then
   begin
@@ -65,8 +67,10 @@ begin
 
     FAlbumModel := TAlbumModel.Create(dmMain.qAlbum);
 
+    // Hook dataset events for UI updates
     dmMain.qAlbum.AfterScroll := @AlbumAfterScroll;
-    dmMain.qAlbum.DataSource.OnDataChange := @AlbumDataChange;
+    if Assigned(dmMain.qAlbum.DataSource) then
+      dmMain.qAlbum.DataSource.OnDataChange := @AlbumDataChange;
 
     // Only display if both dataset and model are valid
     if CanEditDataset then
@@ -74,14 +78,14 @@ begin
   end;
 end;
 
-procedure TAlbums.AlbumDataChange(Sender: TObject; Field: TField);
+procedure TpmAlbum.AlbumDataChange(Sender: TObject; Field: TField);
 begin
   DisplayCurrentRecord;
 end;
 
 { -------------------- DATA -------------------- }
 
-function TAlbums.CanEditDataset: Boolean;
+function TpmAlbum.CanEditDataset: Boolean;
 begin
   Result :=
     Assigned(dmMain) and
@@ -90,7 +94,7 @@ begin
     not dmMain.qAlbum.IsEmpty;
 end;
 
-procedure TAlbums.SyncDatasetWithGrid;
+procedure TpmAlbum.SyncDatasetWithGrid;
 var
   Coord: TGridCoord;
 begin
@@ -101,7 +105,7 @@ begin
     dmMain.qAlbum.RecNo := Coord.Y;
 end;
 
-procedure TAlbums.DisplayCurrentRecord;
+procedure TpmAlbum.DisplayCurrentRecord;
 var
   Stream: TStream;
 begin
@@ -114,61 +118,81 @@ begin
   Stream := FAlbumModel.CreateCoverStream;
   try
     imgAlbumCover.Picture.LoadFromStream(Stream);
+    imgAlbumCover.Invalidate;
+    dbMemoAlbumDescription.Invalidate;
   finally
     Stream.Free;
   end;
 end;
 
-procedure TAlbums.AlbumAfterScroll(DataSet: TDataSet);
+procedure TpmAlbum.AlbumAfterScroll(DataSet: TDataSet);
 begin
   DisplayCurrentRecord;
 end;
 
 { -------------------- SEARCH -------------------- }
 
-procedure TAlbums.edtAlbumSearchChange(Sender: TObject);
-begin
-  //btnClearSearch.Visible := edtAlbumSearch.Text <> '';
 
+procedure TpmAlbum.edtAlbumSearchChange(Sender: TObject);
+begin
   if CanEditDataset then
   begin
-    dmMain.qAlbum.Filtered := False;
+    // Update the query parameter and reopen dataset
+    dmMain.qAlbum.Close;
+    dmMain.qAlbum.ParamByName('SEARCH').AsString := '%' + edtAlbumSearch.Text + '%';
+    dmMain.qAlbum.Open;
 
-    if edtAlbumSearch.Text <> '' then
-    begin
-      dmMain.qAlbum.Filter :=
-        '(Album LIKE '  + QuotedStr('%' + edtAlbumSearch.Text + '%') + ') OR ' +
-        '(Artist LIKE ' + QuotedStr('%' + edtAlbumSearch.Text + '%') + ')';
-      dmMain.qAlbum.Filtered := True;
-    end;
+    // Ensure cursor points to first record
+    if CanEditDataset then
+      dmMain.qAlbum.First;
 
     DisplayCurrentRecord;
   end;
 end;
 
-procedure TAlbums.btnClearSearchClick(Sender: TObject);
+procedure TpmAlbum.btnClearSearchClick(Sender: TObject);
 begin
   edtAlbumSearch.Text := '';
-  dmMain.qAlbum.Filtered := False;
-  //btnClearSearch.Visible := False;
+
+  dmMain.qAlbum.Close;
+  dmMain.qAlbum.ParamByName('SEARCH').AsString := '%%';
+  dmMain.qAlbum.Open;
+
+  if CanEditDataset then
+    dmMain.qAlbum.First;
+
+  DisplayCurrentRecord;
 end;
+
+procedure TpmAlbum.btnClearSearchVisible(Sender: TObject);
+begin
+  btnClearSearch.Visible := True;
+end;
+
+procedure TpmAlbum.edtAlbumSearchExit(Sender: TObject);
+begin
+  btnClearSearch.Visible := False;
+end;
+
 
 { -------------------- GRID -------------------- }
 
-procedure TAlbums.dbgAlbumsCellClick(Column: TColumn);
+procedure TpmAlbum.dbgAlbumsCellClick(Column: TColumn);
 begin
   DisplayCurrentRecord;
 end;
 
+
+
 { -------------------- POPUP -------------------- }
 
-procedure TAlbums.miEditAlbumClick(Sender: TObject);
+procedure TpmAlbum.miEditAlbumClick(Sender: TObject);
 begin
   if CanEditDataset then
     dmMain.qAlbum.Edit;
 end;
 
-procedure TAlbums.miViewTracksClick(Sender: TObject);
+procedure TpmAlbum.miViewTracksClick(Sender: TObject);
 var
   AlbumID: Integer;
 begin
@@ -185,12 +209,12 @@ end;
 
 { -------------------- ALBUM COVER -------------------- }
 
-procedure TAlbums.ImageLoadAlbumCover(Sender: TObject);
+procedure TpmAlbum.ImageLoadAlbumCover(Sender: TObject);
 begin
   if CanEditDataset then
   begin
     // Ensure the dataset points to the selected row
-    //SyncDatasetWithGrid;
+    SyncDatasetWithGrid;
     FAlbumModel.LoadCoverFromDialog(imgAlbumCover, dlgAlbumCover);
   end;
 end;
