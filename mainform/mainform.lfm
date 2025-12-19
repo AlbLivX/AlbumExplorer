@@ -52,6 +52,7 @@ object pmAlbum: TpmAlbum
     Scrollbars = ssVertical
     TabOrder = 0
     OnCellClick = dbgAlbumsCellClick
+    OnMouseWheel = dbgAlbumsMouseWheel
   end
   object edtAlbumSearch: TEdit
     Left = 303

@@ -26,16 +26,16 @@ object dmMain: TdmMain
       '       USERID'
       'FROM Album'
       'WHERE USERID = :UID'
-      '  AND (ALBUM LIKE :SEARCH OR ARTIST LIKE :SEARCH)'
+      '  AND (UPPER(ALBUM) LIKE UPPER(:SEARCH) OR UPPER(ARTIST) LIKE UPPER(:SEARCH))'
+      ''
     )
     FilterOptions = []
     Left = 104
     Top = 88
     ParamData = <    
       item
-        DataType = ftInteger
+        DataType = ftUnknown
         Name = 'UID'
-        ParamType = ptInput
       end    
       item
         DataType = ftString

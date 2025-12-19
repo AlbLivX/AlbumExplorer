@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs,
   DBGrids, ExtCtrls, StdCtrls, Buttons, Menus, DB,
-  dDatenbank, SongsFormUnit, DBCtrls, Grids, ExtDlgs;
+  dDatenbank, SongsFormUnit, DBCtrls, Grids, ExtDlgs, Types;
 
 type
   { TpmAlbum }
@@ -25,6 +25,8 @@ type
     btnClearSearch:         TSpeedButton;
     dbMemoAlbumDescription: TDBMemo;
 
+    procedure dbgAlbumsMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure edtAlbumSearchChange(Sender: TObject);
     procedure btnClearSearchClick(Sender: TObject);
@@ -59,6 +61,12 @@ begin
   if Assigned(dmMain.qAlbum.DataSource) then
     dmMain.qAlbum.DataSource.OnDataChange := @AlbumDataChange;
 
+  DisplayCurrentRecord;
+end;
+
+procedure TpmAlbum.dbgAlbumsMouseWheel(Sender: TObject; Shift: TShiftState;
+  WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+begin
   DisplayCurrentRecord;
 end;
 
@@ -108,21 +116,15 @@ end;
 
 procedure TpmAlbum.edtAlbumSearchChange(Sender: TObject);
 begin
-  if CanEditDataset then
-  begin
-    dmMain.qAlbum.Close;
+  dmMain.qAlbum.Close;
+  dmMain.qAlbum.ParamByName('UID').AsInteger := dmMain.CurrentUserID;
+  dmMain.qAlbum.ParamByName('SEARCH').AsString := '%' + Trim(edtAlbumSearch.Text) + '%';
+  dmMain.qAlbum.Open;
 
-    dmMain.qAlbum.ParamByName('UID').AsInteger := dmMain.CurrentUserID;
-    dmMain.qAlbum.ParamByName('SEARCH').AsString := '%' + edtAlbumSearch.Text + '%';
-
-    dmMain.qAlbum.Open;
-
-    if CanEditDataset then
-      dmMain.qAlbum.First;
-
-    DisplayCurrentRecord;
-  end;
+  DisplayCurrentRecord;
 end;
+
+
 
 
 procedure TpmAlbum.btnClearSearchClick(Sender: TObject);
