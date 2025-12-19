@@ -5,7 +5,7 @@ unit dDatenbank;
 interface
 
 uses
-  Classes, SysUtils, Uni, InterBaseUniProvider;
+  Classes, SysUtils, Uni, InterBaseUniProvider, DB;
 
 type
 
@@ -33,6 +33,7 @@ type
 
 
 
+
   private
 
   public
@@ -48,6 +49,8 @@ implementation
 {$R *.lfm}
 
 { TdmMain }
+
+
 
 
 

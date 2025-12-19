@@ -14,43 +14,50 @@ object pmAlbum: TpmAlbum
   Font.Name = 'Sans'
   Font.Style = [fsBold]
   Position = poDesktopCenter
+  Scaled = False
   object dbgAlbums: TDBGrid
-    Left = 40
+    Left = 25
     Height = 240
     Top = 392
-    Width = 528
+    Width = 552
     Color = clWindow
     Columns = <    
       item
         Title.Caption = 'ID'
+        Width = 85
         FieldName = 'ID'
       end    
       item
         Title.Caption = 'Album'
+        Width = 177
         FieldName = 'ALBUM'
       end    
       item
         Title.Caption = 'Artist'
+        Width = 170
         FieldName = 'ARTIST'
       end    
       item
         Title.Caption = 'Released in'
+        Width = 85
         FieldName = 'RELEASEYEAR'
       end>
     DataSource = dmMain.sqAlbum
+    Font.Color = 12629936
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
+    ParentFont = False
+    PopupMenu = pmAlbum
+    Scrollbars = ssVertical
     TabOrder = 0
-  end
-  object imgAlbumCover: TImage
-    Left = 40
-    Height = 224
-    Top = 16
-    Width = 248
+    OnCellClick = dbgAlbumsCellClick
   end
   object edtAlbumSearch: TEdit
-    Left = 288
+    Left = 303
     Height = 30
     Hint = 'Search...'
-    Top = 352
+    Top = 353
     Width = 240
     ParentShowHint = False
     ShowHint = True
@@ -59,20 +66,65 @@ object pmAlbum: TpmAlbum
     OnExit = edtAlbumSearchExit
   end
   object btnClearSearch: TSpeedButton
-    Left = 529
-    Height = 32
-    Top = 352
+    Left = 538
+    Height = 30
+    Top = 353
     Width = 39
+    Caption = 'X'
+    Font.Color = clMaroon
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
     Visible = False
+    ParentFont = False
     OnClick = btnClearSearchClick
   end
   object dbMemoAlbumDescription: TDBMemo
-    Left = 40
+    Left = 25
     Height = 90
-    Top = 256
+    Top = 293
     Width = 248
+    DataField = 'DESCRIPTION'
     DataSource = dmMain.sqAlbum
+    Font.Color = 9789793
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 2
+  end
+  object lblDescription: TLabel
+    Left = 25
+    Height = 18
+    Top = 273
+    Width = 80
+    Caption = 'Description:'
+    Font.Color = 5789784
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object lblSearch: TLabel
+    Left = 305
+    Height = 18
+    Top = 334
+    Width = 49
+    Caption = 'Search:'
+    Font.Color = 5789784
+    Font.Height = -13
+    Font.Name = 'Sans'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object imgAlbumCover: TImage
+    Left = 25
+    Height = 240
+    Top = 8
+    Width = 248
+    Proportional = True
+    Stretch = True
+    OnClick = imgAlbumCoverClick
   end
   object pmAlbum: TPopupMenu
     Left = 464
@@ -83,6 +135,7 @@ object pmAlbum: TpmAlbum
     end
     object miViewTracks: TMenuItem
       Caption = 'miViewTracks'
+      OnClick = miViewTracksClick
     end
   end
   object dlgAlbumCover: TOpenPictureDialog

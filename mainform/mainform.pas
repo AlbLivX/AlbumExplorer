@@ -7,43 +7,38 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs,
   DBGrids, ExtCtrls, StdCtrls, Buttons, Menus, DB,
-  dDatenbank, SongsFormUnit, AlbumModel, DBCtrls, Grids, ExtDlgs;
+  dDatenbank, SongsFormUnit, DBCtrls, Grids, ExtDlgs;
 
 type
-
   { TpmAlbum }
 
   TpmAlbum = class(TForm)
     dbgAlbums:              TDBGrid;
     edtAlbumSearch:         TEdit;
-    imgAlbumCover:          TImage;
     dlgAlbumCover:          TOpenPictureDialog;
+    imgAlbumCover:          TImage;
+    lblDescription:         TLabel;
+    lblSearch:              TLabel;
     pmAlbum:                TPopupMenu;
     miEditAlbum:            TMenuItem;
     miViewTracks:           TMenuItem;
     btnClearSearch:         TSpeedButton;
     dbMemoAlbumDescription: TDBMemo;
 
-    procedure FormCreate           (Sender: TObject);
-    procedure edtAlbumSearchChange (Sender: TObject);
-    procedure btnClearSearchClick  (Sender: TObject);
-    procedure dbgAlbumsCellClick   (Column: TColumn);
-    procedure miEditAlbumClick     (Sender: TObject);
-    procedure miViewTracksClick    (Sender: TObject);
-    procedure ImageLoadAlbumCover  (Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure edtAlbumSearchChange(Sender: TObject);
+    procedure btnClearSearchClick(Sender: TObject);
     procedure btnClearSearchVisible(Sender: TObject);
-    procedure edtAlbumSearchExit   (Sender: TObject);
-
+    procedure edtAlbumSearchExit(Sender: TObject);
+    procedure miEditAlbumClick(Sender: TObject);
+    procedure miViewTracksClick(Sender: TObject);
+    procedure imgAlbumCoverClick(Sender: TObject);
+    procedure dbgAlbumsCellClick(Column: TColumn);
 
   private
-    FAlbumModel: TAlbumModel;
-
     procedure DisplayCurrentRecord;
+    procedure AlbumDataChange(Sender: TObject; Field: TField);
     function CanEditDataset: Boolean;
-    procedure SyncDatasetWithGrid;
-
-    procedure AlbumAfterScroll(DataSet: TDataSet);
-    procedure AlbumDataChange (Sender: TObject; Field: TField);
   end;
 
 var
@@ -57,25 +52,14 @@ implementation
 
 procedure TpmAlbum.FormCreate(Sender: TObject);
 begin
-  if Assigned(dmMain) and Assigned(dmMain.qAlbum) then
-  begin
-    if not dmMain.cDatenbank.Connected then
-      dmMain.cDatenbank.Connected := True;
+  dmMain.cDatenbank.Connected := True;
+  dmMain.qAlbum.Open;
 
-    if not dmMain.qAlbum.Active then
-      dmMain.qAlbum.Open;
+  // Hook DataSource change to automatically update cover
+  if Assigned(dmMain.qAlbum.DataSource) then
+    dmMain.qAlbum.DataSource.OnDataChange := @AlbumDataChange;
 
-    FAlbumModel := TAlbumModel.Create(dmMain.qAlbum);
-
-    // Hook dataset events for UI updates
-    dmMain.qAlbum.AfterScroll := @AlbumAfterScroll;
-    if Assigned(dmMain.qAlbum.DataSource) then
-      dmMain.qAlbum.DataSource.OnDataChange := @AlbumDataChange;
-
-    // Only display if both dataset and model are valid
-    if CanEditDataset then
-      DisplayCurrentRecord;
-  end;
+  DisplayCurrentRecord;
 end;
 
 procedure TpmAlbum.AlbumDataChange(Sender: TObject; Field: TField);
@@ -94,55 +78,45 @@ begin
     not dmMain.qAlbum.IsEmpty;
 end;
 
-procedure TpmAlbum.SyncDatasetWithGrid;
-var
-  Coord: TGridCoord;
-begin
-  if not Assigned(dbgAlbums.DataSource) then Exit;
-
-  Coord := dbgAlbums.MouseCoord(dbgAlbums.ScreenToClient(Mouse.CursorPos).X, dbgAlbums.ScreenToClient(Mouse.CursorPos).Y);
-  if (Coord.Y > 0) and CanEditDataset then
-    dmMain.qAlbum.RecNo := Coord.Y;
-end;
-
 procedure TpmAlbum.DisplayCurrentRecord;
 var
-  Stream: TStream;
+  Field: TField;
+  BlobStream: TStream;
 begin
-  if not Assigned(FAlbumModel) or not CanEditDataset then Exit;
+  if not CanEditDataset then
+  begin
+    imgAlbumCover.Picture := nil;
+    Exit;
+  end;
 
   imgAlbumCover.Picture := nil;
 
-  if not FAlbumModel.HasCover then Exit;
-
-  Stream := FAlbumModel.CreateCoverStream;
-  try
-    imgAlbumCover.Picture.LoadFromStream(Stream);
-    imgAlbumCover.Invalidate;
-    dbMemoAlbumDescription.Invalidate;
-  finally
-    Stream.Free;
+  Field := dmMain.qAlbum.FindField('ALBUMCOVER');
+  if Assigned(Field) and (Field.DataType = ftBlob) and not Field.IsNull then
+  begin
+    BlobStream := dmMain.qAlbum.CreateBlobStream(Field, bmRead);
+    try
+      if BlobStream.Size > 0 then
+        imgAlbumCover.Picture.LoadFromStream(BlobStream);
+    finally
+      BlobStream.Free;
+    end;
   end;
 end;
 
-procedure TpmAlbum.AlbumAfterScroll(DataSet: TDataSet);
-begin
-  DisplayCurrentRecord;
-end;
-
 { -------------------- SEARCH -------------------- }
-
 
 procedure TpmAlbum.edtAlbumSearchChange(Sender: TObject);
 begin
   if CanEditDataset then
   begin
-    // Update the query parameter and reopen dataset
     dmMain.qAlbum.Close;
+
+    dmMain.qAlbum.ParamByName('UID').AsInteger := dmMain.CurrentUserID;
     dmMain.qAlbum.ParamByName('SEARCH').AsString := '%' + edtAlbumSearch.Text + '%';
+
     dmMain.qAlbum.Open;
 
-    // Ensure cursor points to first record
     if CanEditDataset then
       dmMain.qAlbum.First;
 
@@ -150,11 +124,13 @@ begin
   end;
 end;
 
+
 procedure TpmAlbum.btnClearSearchClick(Sender: TObject);
 begin
   edtAlbumSearch.Text := '';
 
   dmMain.qAlbum.Close;
+  dmMain.qAlbum.ParamByName('UID').AsInteger := dmMain.CurrentUserID;
   dmMain.qAlbum.ParamByName('SEARCH').AsString := '%%';
   dmMain.qAlbum.Open;
 
@@ -163,6 +139,7 @@ begin
 
   DisplayCurrentRecord;
 end;
+
 
 procedure TpmAlbum.btnClearSearchVisible(Sender: TObject);
 begin
@@ -174,15 +151,12 @@ begin
   btnClearSearch.Visible := False;
 end;
 
-
 { -------------------- GRID -------------------- }
 
 procedure TpmAlbum.dbgAlbumsCellClick(Column: TColumn);
 begin
   DisplayCurrentRecord;
 end;
-
-
 
 { -------------------- POPUP -------------------- }
 
@@ -209,14 +183,22 @@ end;
 
 { -------------------- ALBUM COVER -------------------- }
 
-procedure TpmAlbum.ImageLoadAlbumCover(Sender: TObject);
+procedure TpmAlbum.imgAlbumCoverClick(Sender: TObject);
+var
+  Field: TField;
 begin
-  if CanEditDataset then
+  if not CanEditDataset then Exit;
+
+  if dlgAlbumCover.Execute then
   begin
-    // Ensure the dataset points to the selected row
-    SyncDatasetWithGrid;
-    FAlbumModel.LoadCoverFromDialog(imgAlbumCover, dlgAlbumCover);
+    dmMain.qAlbum.Edit;
+    Field := dmMain.qAlbum.FindField('ALBUMCOVER');
+    if Field is TBlobField then
+      TBlobField(Field).LoadFromFile(dlgAlbumCover.FileName);
+    dmMain.qAlbum.Post;
   end;
+
+  DisplayCurrentRecord;
 end;
 
 end.

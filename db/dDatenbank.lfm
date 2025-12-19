@@ -45,7 +45,7 @@ object dmMain: TdmMain
   end
   object sqAlbum: TUniDataSource
     DataSet = qAlbum
-    Left = 207
+    Left = 208
     Top = 88
   end
   object qSongs: TUniQuery

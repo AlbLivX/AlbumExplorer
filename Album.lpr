@@ -9,7 +9,6 @@ uses
 {$R *.res}
 
 begin
-  Application.Scaled:=True;
   Application.CreateForm(TdmMain, dmMain);
   Application.CreateForm(TpmAlbum, pmAlbum);
   Application.CreateForm(TLoginForm, LoginForm);

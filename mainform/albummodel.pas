@@ -14,6 +14,7 @@ type
     FDataSet: TDataSet;
   public
     constructor Create(ADataSet: TDataSet);
+    function HasValidDataset: Boolean;
 
     function HasCover: Boolean;
     function CreateCoverStream: TStream;
@@ -23,80 +24,76 @@ type
 
 implementation
 
-{ -------------------- CONSTRUCTOR -------------------- }
+{-------------------- CONSTRUCTOR --------------------}
 
 constructor TAlbumModel.Create(ADataSet: TDataSet);
 begin
   FDataSet := ADataSet;
 end;
 
-{ -------------------- COVER CHECK -------------------- }
+{-------------------- DATASET VALIDATION --------------------}
+
+function TAlbumModel.HasValidDataset: Boolean;
+begin
+  Result :=
+    Assigned(FDataSet) and
+    FDataSet.Active and
+    (not FDataSet.IsEmpty);
+end;
+
+{-------------------- COVER CHECK -------------------}
 
 function TAlbumModel.HasCover: Boolean;
 var
   Field: TField;
 begin
   Result := False;
-  if not Assigned(FDataSet) or not FDataSet.Active then Exit;
+  if not HasValidDataset then Exit;
 
-  Field := FDataSet.FieldByName('ALBUMCOVER');
-  Result := Assigned(Field) and not Field.IsNull;
+  Field := FDataSet.FindField('ALBUMCOVER');
+  if (Field is TBlobField) then
+    Result :=
+      (not Field.IsNull) and
+      (TBlobField(Field).BlobSize > 0);
 end;
 
-{ -------------------- CREATE STREAM -------------------- }
+{-------------------- CREATE STREAM --------------------}
 
 function TAlbumModel.CreateCoverStream: TStream;
 var
   Field: TField;
 begin
   Result := nil;
-  if not Assigned(FDataSet) or not FDataSet.Active then Exit;
+  if not HasValidDataset then Exit;
 
-  Field := FDataSet.FieldByName('ALBUMCOVER');
-  if Assigned(Field) and not Field.IsNull then
+  Field := FDataSet.FindField('ALBUMCOVER');
+  if (Field is TBlobField) and (not Field.IsNull) then
     Result := FDataSet.CreateBlobStream(Field, bmRead);
 end;
 
-{ -------------------- LOAD FROM DIALOG -------------------- }
+{-------------------- LOAD FROM DIALOG --------------------}
 
 procedure TAlbumModel.LoadCoverFromDialog(TargetImage: TImage; Dialog: TOpenDialog);
 var
-  FileStream, BlobStream: TStream;
   Field: TField;
 begin
-  if not Assigned(FDataSet) or not FDataSet.Active then Exit;
+  if not HasValidDataset then Exit;
   if not Assigned(TargetImage) or not Assigned(Dialog) then Exit;
   if not Dialog.Execute then Exit;
 
-  Field := FDataSet.FieldByName('ALBUMCOVER');
-  if not Assigned(Field) then
-    raise Exception.Create('ALBUMCOVER field missing');
+  Field := FDataSet.FindField('ALBUMCOVER');
+  if not (Field is TBlobField) then Exit;
 
   FDataSet.Edit;
-
-  { Copy file into BLOB field }
-  FileStream := TFileStream.Create(Dialog.FileName, fmOpenRead);
   try
-    BlobStream := FDataSet.CreateBlobStream(Field, bmWrite);
-    try
-      BlobStream.CopyFrom(FileStream, FileStream.Size);
-    finally
-      BlobStream.Free;
-    end;
-  finally
-    FileStream.Free;
+    TBlobField(Field).LoadFromFile(Dialog.FileName);
+    FDataSet.Post;
+  except
+    FDataSet.Cancel;
+    raise;
   end;
 
-  FDataSet.Post;
-
-  { Also display in TImage immediately }
-  FileStream := TFileStream.Create(Dialog.FileName, fmOpenRead);
-  try
-    TargetImage.Picture.LoadFromStream(FileStream);
-  finally
-    FileStream.Free;
-  end;
+  TargetImage.Picture.LoadFromFile(Dialog.FileName);
 end;
 
 end.
-
