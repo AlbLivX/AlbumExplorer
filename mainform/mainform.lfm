@@ -14,6 +14,7 @@ object pmAlbum: TpmAlbum
   Font.Name = 'Sans'
   Font.Style = [fsBold]
   Position = poDesktopCenter
+  LCLVersion = '4.2.0.0'
   Scaled = False
   object dbgAlbums: TDBGrid
     Left = 25
@@ -52,7 +53,6 @@ object pmAlbum: TpmAlbum
     Scrollbars = ssVertical
     TabOrder = 0
     OnCellClick = dbgAlbumsCellClick
-    OnMouseWheel = dbgAlbumsMouseWheel
   end
   object edtAlbumSearch: TEdit
     Left = 303

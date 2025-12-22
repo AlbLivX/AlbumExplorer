@@ -93,6 +93,7 @@ begin
     raise;
   end;
 
+  // Immediately update the image on the form
   TargetImage.Picture.LoadFromFile(Dialog.FileName);
 end;
 

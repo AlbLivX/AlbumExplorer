@@ -103,14 +103,6 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="AlbumModel"/>
       </Unit>
-      <Unit>
-        <Filename Value="unitToTest/blobimagestreamtest.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form1"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="BLOBImageStreamTest"/>
-      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -120,7 +112,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="auth;db;helpers;mainform;songsform;res;auth/objects;unitToTest"/>
+      <OtherUnitFiles Value="auth;db;helpers;mainform;songsform;res;auth/objects"/>
       <UnitOutputDirectory Value="/home/LAlbrecht/ComponentsLaz/UniDAC/Source"/>
     </SearchPaths>
     <Linking>
