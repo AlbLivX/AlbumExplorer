@@ -14,8 +14,9 @@ object pmAlbum: TpmAlbum
   Font.Name = 'Sans'
   Font.Style = [fsBold]
   Position = poDesktopCenter
-  LCLVersion = '4.2.0.0'
   Scaled = False
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   object dbgAlbums: TDBGrid
     Left = 25
     Height = 240
@@ -63,8 +64,7 @@ object pmAlbum: TpmAlbum
     ParentShowHint = False
     ShowHint = True
     TabOrder = 1
-    OnClick = btnClearSearchVisible
-    OnExit = edtAlbumSearchExit
+    OnChange = edtAlbumSearchChange
   end
   object btnClearSearch: TSpeedButton
     Left = 538
@@ -119,10 +119,12 @@ object pmAlbum: TpmAlbum
     ParentFont = False
   end
   object imgAlbumCover: TImage
+    Cursor = crHandPoint
     Left = 25
     Height = 240
     Top = 8
     Width = 248
+    Center = True
     Proportional = True
     Stretch = True
     OnClick = imgAlbumCoverClick

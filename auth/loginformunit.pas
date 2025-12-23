@@ -38,6 +38,7 @@ procedure TLoginForm.btnLoginClick(Sender: TObject);
 var
   User: TUserObject;
 begin
+
   // Create user object using the queries from dmMain
   User := TUserObject.Create(dmMain.qUserCheckExists,
                              dmMain.qUsersInsert,

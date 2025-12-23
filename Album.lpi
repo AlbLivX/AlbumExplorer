@@ -103,6 +103,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="AlbumModel"/>
       </Unit>
+      <Unit>
+        <Filename Value="auth/objects/passwordutilsunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="PasswordUtilsUnit"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

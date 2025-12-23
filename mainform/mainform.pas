@@ -26,11 +26,11 @@ type
     btnClearSearch:         TSpeedButton;
     dbMemoAlbumDescription: TDBMemo;
 
+
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure edtAlbumSearchChange(Sender: TObject);
     procedure btnClearSearchClick(Sender: TObject);
-    procedure btnClearSearchVisible(Sender: TObject);
-    procedure edtAlbumSearchExit(Sender: TObject);
     procedure dbgAlbumsCellClick(Column: TColumn);
     procedure imgAlbumCoverClick(Sender: TObject);
     procedure miEditAlbumClick(Sender: TObject);
@@ -40,9 +40,7 @@ type
     FAlbumModel: TAlbumModel;
     procedure AlbumDataChange(Sender: TObject; Field: TField);
     procedure DisplayCurrentRecord;
-    function CanEditDataset: Boolean;
-  public
-
+    function  CanEditDataset: Boolean;
   end;
 
 var
@@ -57,18 +55,25 @@ procedure TpmAlbum.FormCreate(Sender: TObject);
 begin
   dmMain.cDatenbank.Connected := True;
 
-  // Open the album dataset for current user
+  pmAlbum.PopupComponent := dbgAlbums;
+
   dmMain.qAlbum.Close;
   dmMain.qAlbum.ParamByName('UID').AsInteger := dmMain.CurrentUserID;
+  dmMain.qAlbum.ParamByName('SEARCH').AsString := '%%';
   dmMain.qAlbum.Open;
 
-  // Create the model
+  FreeAndNil(FAlbumModel);
   FAlbumModel := TAlbumModel.Create(dmMain.qAlbum);
 
   if Assigned(dmMain.sqAlbum) then
     dmMain.sqAlbum.OnDataChange := @AlbumDataChange;
 
   DisplayCurrentRecord;
+end;
+
+procedure TpmAlbum.FormDestroy(Sender: TObject);
+begin
+  FreeAndNil(FAlbumModel);
 end;
 
 { -------------------- DATA -------------------- }
@@ -88,58 +93,50 @@ procedure TpmAlbum.DisplayCurrentRecord;
 var
   BlobStream: TStream;
 begin
-  if not CanEditDataset then
-  begin
-    imgAlbumCover.Picture := nil;
-    Exit;
-  end;
-
   imgAlbumCover.Picture := nil;
+
+  if not CanEditDataset then Exit;
 
   if FAlbumModel.HasCover then
   begin
     BlobStream := FAlbumModel.CreateCoverStream;
     if Assigned(BlobStream) then
     try
-      imgAlbumCover.Picture.LoadFromStream(BlobStream);
+      if BlobStream.Size > 0 then
+        imgAlbumCover.Picture.LoadFromStream(BlobStream);
     finally
       BlobStream.Free;
     end;
   end;
 end;
 
-{ -------------------- SEARCH -------------------- }
+{ -------------------- SEARCH (SERVER SIDE) -------------------- }
 procedure TpmAlbum.edtAlbumSearchChange(Sender: TObject);
 var
-  FilterText: string;
+  S: string;
 begin
-  FilterText := Trim(edtAlbumSearch.Text);
-  dmMain.qAlbum.Filtered := False;
+  S := Trim(edtAlbumSearch.Text);
+  btnClearSearch.Visible := S <> '';
 
-  if FilterText <> '' then
-    dmMain.qAlbum.Filter :=
-      Format('(ALBUM LIKE ''%%%s%%'') OR (ARTIST LIKE ''%%%s%%'')',
-             [FilterText, FilterText]);
+  dmMain.qAlbum.Close;
+  dmMain.qAlbum.ParamByName('UID').AsInteger := dmMain.CurrentUserID;
 
-  dmMain.qAlbum.Filtered := FilterText <> '';
+  if S = '' then
+    dmMain.qAlbum.ParamByName('SEARCH').AsString := '%%'
+  else
+    dmMain.qAlbum.ParamByName('SEARCH').AsString := '%' + S + '%';
+
+  dmMain.qAlbum.Open;
+
+  FreeAndNil(FAlbumModel);
+  FAlbumModel := TAlbumModel.Create(dmMain.qAlbum);
+
   DisplayCurrentRecord;
 end;
 
 procedure TpmAlbum.btnClearSearchClick(Sender: TObject);
 begin
-  edtAlbumSearch.Text := '';
-  if Assigned(dmMain.qAlbum) then
-    dmMain.qAlbum.Filtered := False;
-end;
-
-procedure TpmAlbum.btnClearSearchVisible(Sender: TObject);
-begin
-  btnClearSearch.Visible := True;
-end;
-
-procedure TpmAlbum.edtAlbumSearchExit(Sender: TObject);
-begin
-  btnClearSearch.Visible := False;
+  edtAlbumSearch.Text := ''; // triggers OnChange
 end;
 
 { -------------------- GRID -------------------- }
@@ -158,24 +155,46 @@ end;
 { -------------------- POPUP -------------------- }
 procedure TpmAlbum.miEditAlbumClick(Sender: TObject);
 begin
-  if CanEditDataset then
-    dmMain.qAlbum.Edit;
+  if not CanEditDataset then
+  begin
+    ShowMessage('No album selected.');
+    Exit;
+  end;
+
+  if not dmMain.qAlbum.CanModify then
+  begin
+    ShowMessage('Dataset is not editable.');
+    Exit;
+  end;
+
+  dmMain.qAlbum.Edit;
 end;
 
 procedure TpmAlbum.miViewTracksClick(Sender: TObject);
 var
   AlbumID: Integer;
 begin
-  if not CanEditDataset then Exit;
+  if not CanEditDataset then
+  begin
+    ShowMessage('No album selected.');
+    Exit;
+  end;
 
   AlbumID := dmMain.qAlbum.FieldByName('ID').AsInteger;
 
   if not Assigned(Tracks) then
     Tracks := TTracks.Create(Application);
 
-  Tracks.LoadSongsFromAlbum(AlbumID);
-  Tracks.Show;
+  // Ensure that Tracks is fully initialized before calling method
+  try
+    Tracks.LoadSongsFromAlbum(AlbumID);
+    Tracks.Show;
+  except
+    on E: Exception do
+      ShowMessage('Failed to open tracks: ' + E.Message);
+  end;
 end;
+
 
 end.
 

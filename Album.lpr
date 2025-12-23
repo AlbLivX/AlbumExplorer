@@ -4,7 +4,7 @@ program Album;
 
 uses
   Forms, Interfaces, LCLType, DB, dDatenbank, Uni, ibprovider10, LoginFormUnit,
-  MainFormUnit, AlbumModel;
+  MainFormUnit, AlbumModel, PasswordUtilsUnit;
 
 {$R *.res}
 

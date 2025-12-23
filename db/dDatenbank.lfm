@@ -22,7 +22,6 @@ object dmMain: TdmMain
       'WHERE USERID = :UID'
       ' AND UPPER(ALBUM)  LIKE UPPER(:SEARCH)'
       ' OR UPPER(ARTIST) LIKE UPPER(:SEARCH)'
-      ''
     )
     FilterOptions = []
     Left = 104
